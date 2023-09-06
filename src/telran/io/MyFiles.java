@@ -17,37 +17,30 @@ public class MyFiles {
 		// io - dir
 		// test - dir
 		// FileSystemTests.java - file
-		while (maxDepth > 1) {
-			try {
-				Files.walk(Path.of(path).toAbsolutePath().normalize(), maxDepth).forEach(p -> printAll(p, maxDepth));
-			} catch (IOException e) {
+		 if (!Files.isDirectory(Paths.get(path))) {
+	            throw new IllegalArgumentException("The provided path is not a directory.");
+	        }
 
-			}
-		}
+	        displayDirRecursively(Paths.get(path).toAbsolutePath().normalize(), maxDepth);
+	    }
 
+	    private static void displayDirRecursively(Path path, int maxDepth) {
+	        boolean isDirectory = Files.isDirectory(path);
+
+	        if (isDirectory) {
+	            System.out.printf("%s - dir%n", path.getFileName());
+
+	            if (maxDepth > 0) {
+	                try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(path)) {
+	                    for (Path entry : dirStream) {
+	                        displayDirRecursively(entry, maxDepth - 1);
+	                    }
+	                } catch (IOException e) {
+	                    
+	                }
+	            }
+	        } else {
+	            System.out.printf("%s - file%n", path.getFileName());
+	        }
+	    }
 	}
-
-	private static void printAll(Path p, int maxDepth) {
-		boolean isDirectory = Files.isDirectory(p);
-		if (isDirectory) {
-			try {
-				boolean isEmpty = isDirectoryEmpty(p);
-				if (!isEmpty && maxDepth > 1) {
-					displayDir(p.toString(), maxDepth - 1);
-				} else {
-					System.out.printf("%s - dir\n", p.getFileName());
-				}
-			} catch (IOException e) {
-
-			}
-		} else {
-			System.out.printf("%s - file\n", p.getFileName());
-		}
-	}
-
-	private static boolean isDirectoryEmpty(Path directory) throws IOException {
-		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(directory)) {
-			return !dirStream.iterator().hasNext();
-		}
-	}
-}

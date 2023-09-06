@@ -43,7 +43,7 @@ class FileSystemTests {
 	}
 	@Test
 	void displayDirTest() throws IOException {
-		MyFiles.displayDir("/Tel Ran/", 3);
+		MyFiles.displayDir("/Users/User", 3);
 	}
 	
 

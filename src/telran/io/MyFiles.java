@@ -2,6 +2,7 @@ package telran.io;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.Iterator;
 
 public class MyFiles {
 	public static void displayDir(String path, int maxDepth) throws IOException {
@@ -30,12 +31,17 @@ public class MyFiles {
 		boolean isDirectory = Files.isDirectory(p);
 		if (isDirectory) {
 			try {
-				displayDir(p.toString(), maxDepth - 1);
+				Iterator<Path> it = p.iterator();
+				if (it.hasNext()) {
+					displayDir(p.toString(), maxDepth - 1);
+				} else {
+					System.out.printf("%s - dir", p.getFileName());
+				}
 			} catch (IOException e) {
 
 			}
 		} else {
-			System.out.println(p.getFileName());
+			System.out.printf("%s - file", p.getFileName());
 		}
 	}
 }

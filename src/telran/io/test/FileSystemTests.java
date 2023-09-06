@@ -36,14 +36,14 @@ class FileSystemTests {
 		//Files.list(current).map(p -> p.getFileName()).forEach(p -> System.out.println(p));
 		//Files.walk(current).map(p -> p.getFileName()).forEach(p -> System.out.println(p));
 		Files.walk(current, 2).map(p -> p.getFileName()).forEach(p -> System.out.println(p));
-		
+		//C:\Tel Ran\Exclipse_Java_Projects\input-output-network
 		
 		
 		
 	}
 	@Test
 	void displayDirTest() throws IOException {
-		MyFiles.displayDir("/Users/User", 3);
+		MyFiles.displayDir("/Tel Ran/", 3);
 	}
 	
 

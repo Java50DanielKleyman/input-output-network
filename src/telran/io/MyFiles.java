@@ -17,7 +17,7 @@ public class MyFiles {
 		// io - dir
 		// test - dir
 		// FileSystemTests.java - file
-		while (maxDepth > 0) {
+		while (maxDepth > 1) {
 			try {
 				Files.walk(Path.of(path).toAbsolutePath().normalize(), maxDepth).forEach(p -> printAll(p, maxDepth));
 			} catch (IOException e) {
@@ -31,17 +31,23 @@ public class MyFiles {
 		boolean isDirectory = Files.isDirectory(p);
 		if (isDirectory) {
 			try {
-				Iterator<Path> it = p.iterator();
-				if (it.hasNext()) {
+				boolean isEmpty = isDirectoryEmpty(p);
+				if (!isEmpty && maxDepth > 1) {
 					displayDir(p.toString(), maxDepth - 1);
 				} else {
-					System.out.printf("%s - dir", p.getFileName());
+					System.out.printf("%s - dir\n", p.getFileName());
 				}
 			} catch (IOException e) {
 
 			}
 		} else {
-			System.out.printf("%s - file", p.getFileName());
+			System.out.printf("%s - file\n", p.getFileName());
+		}
+	}
+
+	private static boolean isDirectoryEmpty(Path directory) throws IOException {
+		try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(directory)) {
+			return !dirStream.iterator().hasNext();
 		}
 	}
 }

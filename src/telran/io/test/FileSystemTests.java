@@ -43,7 +43,7 @@ class FileSystemTests {
 	}
 	@Test
 	void displayDirTest() throws IOException {
-		MyFiles.displayDir("C:\\Tel Ran\\Exclipse_Java_Projects\\input-output-network\\src\\telran", 3);
+		MyFiles.displayDir("C:/Tel Ran/Exclipse_Java_Projects/input-output-network", 10);
 	}
 	
 

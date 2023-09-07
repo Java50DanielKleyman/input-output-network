@@ -16,11 +16,11 @@ public class MyFiles {
 
 	private static void displayDirRecursively(Path path, int maxDepth, int currentDepth) throws IOException {
 		 boolean isDirectory = Files.isDirectory(path);
-
+String spaces = " ".repeat(currentDepth);
 	        if (isDirectory) {
-	            System.out.printf("%s - dir%n", path.getFileName());
+	            System.out.printf("%s-%s - dir%n", spaces, path.getFileName());
 	        } else {
-	            System.out.printf("%s - file%n", path.getFileName());
+	            System.out.printf("%s-%s - file%n", spaces, path.getFileName());
 	        }
 
 	        if (currentDepth < maxDepth) {

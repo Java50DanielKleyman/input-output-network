@@ -3,52 +3,42 @@ package telran.io;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 public class MyFiles {
 	public static void displayDir(String path, int maxDepth) throws IOException {
-		// TODO
-		// Throwing IllegalArgumentException in the case the given is not a directory
-		// Printing out the directory content using appropriate offsets showing which
-		// node belong to which directory
-		// printing type of node, for example
-		// input-output-network - dir
-		// src - dir
-		// telran - dir
-		// io - dir
-		// test - dir
-		// FileSystemTests.java - file
-		if (!Files.isDirectory(Paths.get(path))) {
+		Path directory = Paths.get(path).toAbsolutePath().normalize();
+		if (!Files.isDirectory(directory)) {
 			throw new IllegalArgumentException("The provided path is not a directory.");
 		}
-
-		Files.walk(Path.of(path).toAbsolutePath().normalize(), maxDepth).forEach(p -> {
-			try {
-				displayDirRecursively(p, 0, maxDepth - 1);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		});
+		displayDirRecursively(directory, maxDepth, 0);
 	}
 
-	private static void displayDirRecursively(Path path, int currentDepth, int maxDepth) throws IOException {
-		boolean isDirectory = Files.isDirectory(path);
+	private static void displayDirRecursively(Path path, int maxDepth, int currentDepth) throws IOException {
+		 boolean isDirectory = Files.isDirectory(path);
 
-		if (currentDepth <= maxDepth) {
-			String indent = "  ".repeat(currentDepth);
-			System.out.printf("%s%s - %s%n", indent, path.getFileName(), isDirectory ? "dir" : "file");
+	        if (isDirectory) {
+	            System.out.printf("%s - dir%n", path.getFileName());
+	        } else {
+	            System.out.printf("%s - file%n", path.getFileName());
+	        }
 
-			if (isDirectory) {
-				Files.walk(path.toAbsolutePath().normalize(), maxDepth).forEach(p -> {
-					try {
-						displayDirRecursively(p, currentDepth + 1, maxDepth - 1);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				});
-
-			}
-		}
+	        if (currentDepth < maxDepth) {
+	            try (Stream<Path> stream = Files.walk(path, 1)) { // Limit to depth 1
+	                stream.forEach(subpath -> {
+	                    if (!subpath.equals(path)) { // Avoid processing the current directory itself
+	                        try {
+	                            displayDirRecursively(subpath, maxDepth-1, currentDepth + 1);
+	                        } catch (IOException e) {
+	                            e.printStackTrace();
+	                        }
+	                    }
+	                });
+	            }
+	        }
+	    }
 	}
-}
+	
+
+
+

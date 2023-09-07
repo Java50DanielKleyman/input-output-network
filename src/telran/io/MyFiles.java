@@ -17,30 +17,42 @@ public class MyFiles {
 		// io - dir
 		// test - dir
 		// FileSystemTests.java - file
-		 if (!Files.isDirectory(Paths.get(path))) {
-	            throw new IllegalArgumentException("The provided path is not a directory.");
-	        }
+		if (!Files.isDirectory(Paths.get(path))) {
+			throw new IllegalArgumentException("The provided path is not a directory.");
+		}
 
-	        displayDirRecursively(Paths.get(path).toAbsolutePath().normalize(), maxDepth);
-	    }
-
-	    private static void displayDirRecursively(Path path, int maxDepth) {
-	        boolean isDirectory = Files.isDirectory(path);
-
-	        if (isDirectory) {
-	            System.out.printf("%s - dir%n", path.getFileName());
-
-	            if (maxDepth > 0) {
-	                try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(path)) {
-	                    for (Path entry : dirStream) {
-	                        displayDirRecursively(entry, maxDepth - 1);
-	                    }
-	                } catch (IOException e) {
-	                    
-	                }
-	            }
-	        } else {
-	            System.out.printf("%s - file%n", path.getFileName());
-	        }
-	    }
+		Files.walk(Path.of(path).toAbsolutePath().normalize(), maxDepth)
+				.forEach(p -> {
+					try {
+						displayDirRecursively(p, 0, maxDepth - 1);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				});
 	}
+
+	private static void displayDirRecursively(Path path, int currentDepth, int maxDepth) throws IOException {
+		boolean isDirectory = Files.isDirectory(path);
+
+		if (isDirectory) {
+			System.out.printf("%s - dir%n", path.getFileName());
+			System.out.println(" ");
+			if (maxDepth > 0) {
+				Files.walk(path.toAbsolutePath().normalize(), maxDepth)
+				.forEach(p -> {
+					try {
+						displayDirRecursively(p, maxDepth-1);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				});
+
+			}
+		} else {
+			System.out.printf("%s - file%n", path.getFileName());
+			System.out.println(" ");
+		}
+	}
+}

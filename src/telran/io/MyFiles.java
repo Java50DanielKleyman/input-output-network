@@ -21,38 +21,30 @@ public class MyFiles {
 			throw new IllegalArgumentException("The provided path is not a directory.");
 		}
 
-		Files.walk(Path.of(path).toAbsolutePath().normalize(), maxDepth)
-				.forEach(p -> {
-					try {
-						displayDirRecursively(p, 0, maxDepth - 1);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				});
+		Files.walk(Path.of(path).toAbsolutePath().normalize(), maxDepth).forEach(p -> {
+			try {
+				displayDirRecursively(p, 0, maxDepth - 1);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 	}
 
 	private static void displayDirRecursively(Path path, int currentDepth, int maxDepth) throws IOException {
 		boolean isDirectory = Files.isDirectory(path);
 
-		if (isDirectory) {
-			System.out.printf("%s - dir%n", path.getFileName());
-			System.out.println(" ");
-			if (maxDepth > 0) {
-				Files.walk(path.toAbsolutePath().normalize(), maxDepth)
-				.forEach(p -> {
-					try {
-						displayDirRecursively(p, maxDepth-1);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				});
+		if (currentDepth <= maxDepth) {
+			String indent = "  ".repeat(currentDepth);
+			System.out.printf("%s%s - %s%n", indent, path.getFileName(), isDirectory ? "dir" : "file");
 
+			if (isDirectory) {
+				try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
+					for (Path subPath : stream) {
+						displayDirRecursively(subPath.toAbsolutePath().normalize(), currentDepth + 1, maxDepth-1);
+					}
+				}
 			}
-		} else {
-			System.out.printf("%s - file%n", path.getFileName());
-			System.out.println(" ");
 		}
 	}
 }

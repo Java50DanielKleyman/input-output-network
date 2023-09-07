@@ -39,11 +39,15 @@ public class MyFiles {
 			System.out.printf("%s%s - %s%n", indent, path.getFileName(), isDirectory ? "dir" : "file");
 
 			if (isDirectory) {
-				try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
-					for (Path subPath : stream) {
-						displayDirRecursively(subPath.toAbsolutePath().normalize(), currentDepth + 1, maxDepth-1);
+				Files.walk(path.toAbsolutePath().normalize(), maxDepth).forEach(p -> {
+					try {
+						displayDirRecursively(p, currentDepth + 1, maxDepth - 1);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				}
+				});
+
 			}
 		}
 	}

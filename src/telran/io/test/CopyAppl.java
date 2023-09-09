@@ -40,7 +40,8 @@ public class CopyAppl {
 
 	private static void copyMethod(String[] args) {
 		int fileLength = 0;
-		try (InputStream input = new FileInputStream(args[0])) {
+		try (InputStream input = new FileInputStream(args[0]);
+				 OutputStream output = new FileOutputStream(args[1])) {
 			fileLength = input.available();
 			int outputPoint = 0;
 			byte[] buffer = new byte[1024 * 1024];
@@ -49,9 +50,10 @@ public class CopyAppl {
 				if (bytesRead < buffer.length) {
 					byte[] newBuffer = new byte[bytesRead];
 					System.arraycopy(buffer, 0, newBuffer, 0, bytesRead);
-					outputMethod(newBuffer, outputPoint, bytesRead, args[1]);
+					output.write(newBuffer, outputPoint, bytesRead);
+				
 				} else {
-					outputMethod(buffer, outputPoint, bytesRead, args[1]);
+					output.write(buffer, outputPoint, bytesRead);
 					outputPoint += bytesRead;
 				}
 			}
@@ -67,17 +69,6 @@ public class CopyAppl {
 	private static void printResult(int fileLength, String args0, String args1) {
 		System.out.printf("successful copying of %s bytes have been copying\n" + "from the file %s to the file %s. ",
 				fileLength, args0, args1);
-
-	}
-
-	private static void outputMethod(byte[] buffer, int startPoint, int length, String destinationPath) {
-		try (OutputStream output = new FileOutputStream(destinationPath, true)) {
-			output.write(buffer, startPoint, length);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 	}
 

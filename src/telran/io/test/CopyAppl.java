@@ -13,7 +13,7 @@ public class CopyAppl {
 
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
-		String[] myArgs = { "C:/Users/Daniel/Desktop/test/111.txt", "C:/Users/Daniel/Desktop/test/222.txt",
+		String[] myArgs = { "C:/Users/Daniel/Desktop/test/111.doc", "C:/Users/Daniel/Desktop/test/222.doc",
 				"overwrite" };
 		if (myArgs.length < 2) {
 			System.out.println("Too few arguments");
@@ -40,24 +40,13 @@ public class CopyAppl {
 
 	private static void copyMethod(String[] args) {
 		int fileLength = 0;
-		try (InputStream input = new FileInputStream(args[0]);
-				 OutputStream output = new FileOutputStream(args[1])) {
+		try (InputStream input = new FileInputStream(args[0]); OutputStream output = new FileOutputStream(args[1])) {
 			fileLength = input.available();
-			int outputPoint = 0;
 			byte[] buffer = new byte[1024 * 1024];
 			int bytesRead = 0;
 			while ((bytesRead = input.read(buffer)) != -1) {
-				if (bytesRead < buffer.length) {
-					byte[] newBuffer = new byte[bytesRead];
-					System.arraycopy(buffer, 0, newBuffer, 0, bytesRead);
-					output.write(newBuffer, outputPoint, bytesRead);
-				
-				} else {
-					output.write(buffer, outputPoint, bytesRead);
-					outputPoint += bytesRead;
-				}
+				output.write(buffer, 0, bytesRead);
 			}
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

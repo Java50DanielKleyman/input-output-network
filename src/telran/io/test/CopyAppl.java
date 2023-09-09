@@ -10,7 +10,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class CopyAppl {
-
+	public static void runMainWithArguments() {
+        String[] arguments = {"C:/Users/Daniel/Desktop/test/111.txt", "C:/Users/Daniel/Desktop/test/222.txt", "overwrite"};
+        main(arguments); // Call main with the arguments array
+    }
 	public static void main(String[] args) {
 		// args[0] - source file
 		// args[2] - destination file

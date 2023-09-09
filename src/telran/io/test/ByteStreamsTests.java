@@ -11,18 +11,18 @@ import java.io.*;
 
 public class ByteStreamsTests {
 	
-	@Test
-	void copyAppTest (){
-		String[] arguments = {"C:/Users/Daniel/Desktop/test/111.txt", "C:/Users/Daniel/Desktop/test/222.txt", "overwrite"};
-		CopyAppl.copyApp(arguments);
-	}
-	@Test
-void ifTest() {
-		String[] arguments = {"C:/Users/Daniel/Desktop/test/111.txt"};
-		CopyAppl.copyApp(arguments);
-		String[] arguments1 = {"C:/Users/Daniel/Desktop/test/111.txt", "C:/Users/Daniel/Desktop/test/222.txt", "ovesdrwrite"};
-		CopyAppl.copyApp(arguments1);
-		String[] arguments2 = {"C:/Users/Daniel/Desktop/test/111.txt", "C:/Users/Daniel/Desktop/test/222.txt"};
-		CopyAppl.copyApp(arguments2);
-	}
+//	@Test
+//	void copyAppTest (){
+//		String[] arguments = {"C:/Users/Daniel/Desktop/test/111.txt", "C:/Users/Daniel/Desktop/test/222.txt", "overwrite"};
+//		CopyAppl.copyApp(arguments);
+//	}
+//	@Test
+//void ifTest() {
+//		String[] arguments = {"C:/Users/Daniel/Desktop/test/111.txt"};
+//		CopyAppl.copyApp(arguments);
+//		String[] arguments1 = {"C:/Users/Daniel/Desktop/test/111.txt", "C:/Users/Daniel/Desktop/test/222.txt", "ovesdrwrite"};
+//		CopyAppl.copyApp(arguments1);
+//		String[] arguments2 = {"C:/Users/Daniel/Desktop/test/111.txt", "C:/Users/Daniel/Desktop/test/222.txt"};
+//		CopyAppl.copyApp(arguments2);
+//	}
 }

@@ -43,8 +43,9 @@ public class CopyAppl {
 		try (InputStream input = new FileInputStream(args[0]); OutputStream output = new FileOutputStream(args[1])) {
 			fileLength = input.available();
 			byte[] buffer = new byte[1024 * 1024];
-			while ((input.read(buffer)) != -1) {
-				output.write(buffer);
+			int bytesRead = 0;
+			while ((bytesRead = input.read(buffer)) != -1) {
+				output.write(buffer, 0, bytesRead);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

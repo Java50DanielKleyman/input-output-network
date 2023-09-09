@@ -12,7 +12,8 @@ import java.nio.file.Path;
 public class CopyAppl {
 
 	public static void main(String[] args) {
-		String[] myArgs = { "C:/Users/Daniel/Desktop/test/111.doc", "C:/Users/Daniel/Desktop/test/222.doc",
+		long startTime = System.currentTimeMillis();
+		String[] myArgs = { "C:/Users/Daniel/Desktop/test/111.txt", "C:/Users/Daniel/Desktop/test/222.txt",
 				"overwrite" };
 		if (myArgs.length < 2) {
 			System.out.println("Too few arguments");
@@ -33,6 +34,8 @@ public class CopyAppl {
 			return;
 		}
 		copyMethod(myArgs);
+		long endTime = System.currentTimeMillis();
+		System.out.printf("\nTime %s milliseconds.", endTime - startTime);
 	}
 
 	private static void copyMethod(String[] args) {
@@ -62,8 +65,7 @@ public class CopyAppl {
 	}
 
 	private static void printResult(int fileLength, String args0, String args1) {
-		System.out.printf(
-				"successful copying of %s bytes have been copying\n" + "from the file %s to the file %s. Time \n",
+		System.out.printf("successful copying of %s bytes have been copying\n" + "from the file %s to the file %s. ",
 				fileLength, args0, args1);
 
 	}

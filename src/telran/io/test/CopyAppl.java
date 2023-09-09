@@ -40,13 +40,12 @@ public class CopyAppl {
 
 	private static void copyMethod(String[] args) {
 		try (InputStream input = new FileInputStream(args[0])) {			
-			int startPoint = 0;
+			int outputPoint = 0;
 			byte[] buffer = new byte[1024 * 1024];
 			int bytesRead = 0;
-			while (bytesRead != -1) {
-				bytesRead = input.read(buffer, startPoint, buffer.length);
-				outputMethod(buffer, startPoint, buffer.length, args[1]);
-				startPoint += buffer.length;
+			while ((bytesRead= input.read(buffer)) != -1) {				
+				outputMethod(buffer, outputPoint, bytesRead, args[1]);
+				outputPoint += bytesRead;
 			}
 
 		} catch (FileNotFoundException e) {
@@ -58,7 +57,7 @@ public class CopyAppl {
 	}
 
 	private static void outputMethod(byte[] buffer, int startPoint, int length, String destinationPath) {
-		try (OutputStream output = new FileOutputStream(destinationPath)) {
+		try (OutputStream output = new FileOutputStream(destinationPath, true)) {
 			output.write(buffer, startPoint, length);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

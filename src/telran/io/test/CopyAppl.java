@@ -10,10 +10,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class CopyAppl {
-	
 
 	public static void main(String[] args) {
-		String[] myArgs = {"C:/Users/Daniel/Desktop/test/111.txt", "C:/Users/Daniel/Desktop/test/222.txt", "overwrite"};	
+		String[] myArgs = { "C:/Users/Daniel/Desktop/test/111.doc", "C:/Users/Daniel/Desktop/test/222.doc",
+				"overwrite" };
 		if (myArgs.length < 2) {
 			System.out.println("Too few arguments");
 			return;
@@ -43,8 +43,14 @@ public class CopyAppl {
 			byte[] buffer = new byte[1024 * 1024];
 			int bytesRead = 0;
 			while ((bytesRead = input.read(buffer)) != -1) {
-				outputMethod(buffer, outputPoint, bytesRead, args[1]);
-				outputPoint += bytesRead;
+				if (bytesRead < buffer.length) {
+					byte[] newBuffer = new byte[bytesRead];
+					System.arraycopy(buffer, 0, newBuffer, 0, bytesRead);
+					outputMethod(newBuffer, outputPoint, bytesRead, args[1]);
+				} else {
+					outputMethod(buffer, outputPoint, bytesRead, args[1]);
+					outputPoint += bytesRead;
+				}
 			}
 
 		} catch (FileNotFoundException e) {

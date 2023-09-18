@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class TextCommentsSeparation {
 
     public static void main(String[] args) throws IOException {
-        String pattern = "^\\s*//\\w*";
+        String pattern = "^\\s*//\\.*";
         String[] arguments = {
             "C:/Users/Daniel/Desktop/test/originalFileWithComments.txt",
             "C:/Users/Daniel/Desktop/test/onlyComments.txt",

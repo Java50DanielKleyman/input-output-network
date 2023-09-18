@@ -5,12 +5,13 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TextCommentsSeparation {
 
     public static void main(String[] args) throws IOException {
-        String pattern = "^\\s*//w*";
+        String pattern = "^\\s*//\\w*";
         String[] arguments = {
             "C:/Users/Daniel/Desktop/test/originalFileWithComments.txt",
             "C:/Users/Daniel/Desktop/test/onlyComments.txt",
@@ -24,7 +25,8 @@ public class TextCommentsSeparation {
         ) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (Pattern.matches(pattern, line)) {
+            	Matcher matcher = Pattern.compile(pattern).matcher(line);
+                if (matcher.find()) {
                     writer.write(line);
                     writer.newLine();
                 } else {

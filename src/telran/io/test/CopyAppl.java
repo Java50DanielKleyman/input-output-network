@@ -1,64 +1,56 @@
 package telran.io.test;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.io.*;
 public class CopyAppl {
 
+	private static final int BUFFER_SIZE = 100;
+
 	public static void main(String[] args) {
-		long startTime = System.currentTimeMillis();
-		String[] myArgs = { "C:/Users/Daniel/Desktop/test/111.doc", "C:/Users/Daniel/Desktop/test/222.doc",
-				"overwrite" };
-		if (myArgs.length < 2) {
-			System.out.println("Too few arguments");
-			return;
-		}
-		if (!Files.exists(Path.of(myArgs[0]))) {
-			System.out.printf("source file %s must exist", myArgs[0]);
-			return;
-		}
-		if (!Files.exists(Path.of(myArgs[1]).getParent())) {
-
-			System.out.printf("The directory %s must exist",
-					Path.of(myArgs[1]).getName(Path.of(myArgs[1]).getNameCount() - 2));
-			return;
-		}
-		if (Files.exists(Path.of(myArgs[1])) && (myArgs.length < 3 || !myArgs[2].equals("overwrite"))) {
-			System.out.printf("File %s cannot be overwritten", myArgs[1]);
-			return;
-		}
-		copyMethod(myArgs);
-		long endTime = System.currentTimeMillis();
-		System.out.printf("\nTime %s milliseconds.", endTime - startTime);
-	}
-
-	private static void copyMethod(String[] args) {
-		int fileLength = 0;
-		try (InputStream input = new FileInputStream(args[0]); OutputStream output = new FileOutputStream(args[1])) {
-			fileLength = input.available();
-			byte[] buffer = new byte[1024 * 1024];
-			int bytesRead = 0;
-			while ((bytesRead = input.read(buffer)) != -1) {
-				output.write(buffer, 0, bytesRead);
+		//args[0] - source file
+		//args[1] - destination file
+		//args[2] - "overwrite" optional
+		//TODO write application for copying from source file to destination file
+		//Implementation Requirement: to use while cycle with read call
+		//main must not contain throws declaration
+		if(args.length < 2 ) {
+			System.out.println("too few arguments ;  usage: <args[0] - source file;"
+					+ "args[1] - destination file; "
+					+ "args[2] - \"overwrite\" optional>");
+		} else {
+			if(!Files.exists(Path.of(args[0]))) {
+				System.out.println(args[0] + " file doesn't exist");
+			} else if(Files.exists(Path.of(args[1])) && (args.length < 3 || !args[2].equals("overwrite"))) {
+				System.out.println(args[1] + " file  exists and cannot be overwritten");
+			} else {
+				try {
+					copy(args[0], args[1]);
+				} catch (RuntimeException e) {
+					e.printStackTrace();
+				} catch(Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-		printResult(fileLength, args[0], args[1]);
+
 	}
 
-	private static void printResult(int fileLength, String args0, String args1) {
-		System.out.printf("successful copying of %s bytes have been copying\n" + "from the file %s to the file %s. ",
-				fileLength, args0, args1);
-
+	private static void copy(String source, String destination) throws Exception{
+		try(InputStream input = new FileInputStream(source); OutputStream output = new FileOutputStream(destination)){
+			long total = 0;
+			int length = 0;
+			byte buffer[] = new byte[BUFFER_SIZE];
+			Instant start = Instant.now();
+			while((length = input.read(buffer)) > 0) {
+				total += length;
+				output.write(buffer, 0, length);
+			}
+			System.out.printf("total bytes: %d; time: %d\n", total, ChronoUnit.MILLIS.between(start, Instant.now()));
+		}
+		
 	}
 
 }

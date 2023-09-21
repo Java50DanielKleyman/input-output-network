@@ -12,6 +12,7 @@ import java.util.List;
 import telran.employees.dto.*;
 
 public interface Company {
+	
 	boolean addEmployee(Employee empl); // adds a given employee object, returns true if added otherwise false (if
 										// employee with the id exists)
 
@@ -24,7 +25,7 @@ public interface Company {
 	List<Employee> getEmployees(); // returns list of all employee objects. In the case of none exists it returns
 									// empty list
 
-	default void restore(String dataFile) {
+	default List<Employee> restore(String dataFile) {
 		// TODO
 		// restoring all employees from a given file
 
@@ -37,6 +38,7 @@ public interface Company {
 		} catch (IOException | ClassNotFoundException e) {
 			throw new RuntimeException("Error while restoring data from file: " + e.getMessage(), e);
 		}
+		return employeesList;
 	}
 
 	default void save(String dataFile) {
@@ -51,4 +53,6 @@ public interface Company {
 			throw new RuntimeException("Error while saving data to file: " + e.getMessage(), e);
 		}
 	}
+
+	void removeAll();
 }

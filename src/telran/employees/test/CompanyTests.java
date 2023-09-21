@@ -17,7 +17,7 @@ import telran.employees.dto.Employee;
 import telran.employees.service.Company;
 import telran.employees.service.CompanyImpl;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CompanyTests {
 
 	final static String TEST_FILE_NAME = "test.data";
@@ -34,7 +34,7 @@ class CompanyTests {
 	}
 
 	@Test
-	@Order(1)
+//	@Order(1)
 	void testAddEmployee() {
 		assertTrue(company.addEmployee(newEmployee));
 		assertTrue(company.getEmployees().contains(newEmployee));
@@ -42,7 +42,7 @@ class CompanyTests {
 	}
 
 	@Test
-	@Order(2)
+//	@Order(2)
 	void testRemoveEmployee() {
 		assertEquals(newEmployee, company.removeEmployee(2568));
 		assertFalse(company.getEmployees().contains(newEmployee));
@@ -50,7 +50,7 @@ class CompanyTests {
 	}
 
 	@Test
-	@Order(3)
+//	@Order(3)
 	void testGetEmployee() {
 		assertEquals(new Employee(1234, "Vasya", "managment", 10500, LocalDate.of(1983, 7, 10)),
 				company.getEmployee(1234));
@@ -58,24 +58,21 @@ class CompanyTests {
 	}
 
 	@Test
-	@Order(4)
+//	@Order(4)
 	void testGetEmployees() {
 		assertEquals(Arrays.stream(emplArray).collect(Collectors.toList()), company.getEmployees());
 	}
 
 	@Test
-	@Order(6)
-	void testRestore() {
-		company.save(TEST_FILE_NAME); 
-        company.restore(TEST_FILE_NAME); 
-        List<Employee> expectedList = Arrays.stream(emplArray).collect(Collectors.toList());
-        assertEquals(expectedList, company.getEmployees());
-	}
-
-	@Test
-	@Order(5)
-	void testSave() {
+//	@Order(5)
+	void testSaveAndRestore() {
 		company.save(TEST_FILE_NAME);
+		company.removeAll();
+		List<Employee> expectedList = Arrays.stream(emplArray).collect(Collectors.toList());
+		List<Employee> restoredList = company.restore(TEST_FILE_NAME);
+		restoredList.stream().forEach(employee -> company.addEmployee(employee));
+		assertEquals(expectedList, company.getEmployees());
+
 	}
 
 }

@@ -27,7 +27,7 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public List<Employee> getEmployees() {		
-		return (List<Employee>) employees.values();
+		return new ArrayList<>(employees.values());
 	}
 
 }

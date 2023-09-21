@@ -61,16 +61,16 @@ class CompanyTests {
 		assertEquals(Arrays.stream(emplArray).collect(Collectors.toList()), company.getEmployees());
 	}
 
-	@Test
-	@Order(6)
-	void testRestore() {
-		// TODO
-	}
-
-	@Test
-	@Order(5)
-	void testSave() {
-		// TODO
-	}
+//	@Test
+//	@Order(6)
+//	void testRestore() {
+//		// TODO
+//	}
+//
+//	@Test
+//	@Order(5)
+//	void testSave() {
+//		// TODO
+//	}
 
 }

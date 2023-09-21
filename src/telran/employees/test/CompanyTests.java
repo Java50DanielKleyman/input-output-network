@@ -70,8 +70,7 @@ class CompanyTests {
 		company.save(TEST_FILE_NAME);
 		company.removeAll();
 		List<Employee> expectedList = Arrays.stream(emplArray).collect(Collectors.toList());
-		List<Employee> restoredList = company.restore(TEST_FILE_NAME);
-		restoredList.stream().forEach(employee -> company.addEmployee(employee));
+		company.restore(TEST_FILE_NAME);		
 		assertEquals(expectedList, company.getEmployees());
 
 	}

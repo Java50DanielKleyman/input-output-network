@@ -25,20 +25,20 @@ public interface Company {
 	List<Employee> getEmployees(); // returns list of all employee objects. In the case of none exists it returns
 									// empty list
 
-	default List<Employee> restore(String dataFile) {
+	default void restore(String dataFile) {
 		// TODO
 		// restoring all employees from a given file
 
 		List<Employee> employeesList = new ArrayList<>();
 		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(dataFile))) {
 			employeesList = (List<Employee>) input.readObject();
+			employeesList.stream().forEach(empl->addEmployee(empl));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException | ClassNotFoundException e) {
 			throw new RuntimeException("Error while restoring data from file: " + e.getMessage(), e);
-		}
-		return employeesList;
+		}		
 	}
 
 	default void save(String dataFile) {

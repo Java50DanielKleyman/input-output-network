@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,14 +14,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import telran.employees.dto.Employee;
-
+import telran.employees.service.Company;
 import telran.employees.service.CompanyImpl;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CompanyTests {
 
 	final static String TEST_FILE_NAME = "test.data";
-	CompanyImpl company;
+	Company company;
 	Employee newEmployee = new Employee(2568, "Sasha", "sales", 20000, LocalDate.of(1990, 11, 12));
 	Employee[] emplArray = { new Employee(1234, "Vasya", "managment", 10500, LocalDate.of(1983, 7, 10)),
 			new Employee(1235, "Pesya", "marketing", 15500, LocalDate.of(1973, 5, 15)),
@@ -28,6 +29,7 @@ class CompanyTests {
 
 	@BeforeEach
 	void setUp() throws Exception {
+		company = new CompanyImpl();
 		Arrays.stream(emplArray).forEach(employee -> company.addEmployee(employee));
 	}
 
@@ -61,16 +63,19 @@ class CompanyTests {
 		assertEquals(Arrays.stream(emplArray).collect(Collectors.toList()), company.getEmployees());
 	}
 
-//	@Test
-//	@Order(6)
-//	void testRestore() {
-//		// TODO
-//	}
-//
-//	@Test
-//	@Order(5)
-//	void testSave() {
-//		// TODO
-//	}
+	@Test
+	@Order(6)
+	void testRestore() {
+		company.save(TEST_FILE_NAME); 
+        company.restore(TEST_FILE_NAME); 
+        List<Employee> expectedList = Arrays.stream(emplArray).collect(Collectors.toList());
+        assertEquals(expectedList, company.getEmployees());
+	}
+
+	@Test
+	@Order(5)
+	void testSave() {
+		company.save(TEST_FILE_NAME);
+	}
 
 }

@@ -17,7 +17,7 @@ import telran.employees.dto.Employee;
 import telran.employees.service.Company;
 import telran.employees.service.CompanyImpl;
 
-//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CompanyTests {
 
 	final static String TEST_FILE_NAME = "test.data";
@@ -34,15 +34,16 @@ class CompanyTests {
 	}
 
 	@Test
-//	@Order(1)
+	@Order(1)
 	void testAddEmployee() {
+		company.removeAll();
 		assertTrue(company.addEmployee(newEmployee));
 		assertTrue(company.getEmployees().contains(newEmployee));
 		assertFalse(company.addEmployee(newEmployee));
 	}
 
 	@Test
-//	@Order(2)
+	@Order(2)
 	void testRemoveEmployee() {
 		assertEquals(newEmployee, company.removeEmployee(2568));
 		assertFalse(company.getEmployees().contains(newEmployee));
@@ -50,7 +51,7 @@ class CompanyTests {
 	}
 
 	@Test
-//	@Order(3)
+	@Order(3)
 	void testGetEmployee() {
 		assertEquals(new Employee(1234, "Vasya", "managment", 10500, LocalDate.of(1983, 7, 10)),
 				company.getEmployee(1234));
@@ -58,13 +59,13 @@ class CompanyTests {
 	}
 
 	@Test
-//	@Order(4)
+	@Order(4)
 	void testGetEmployees() {
 		assertEquals(Arrays.stream(emplArray).collect(Collectors.toList()), company.getEmployees());
 	}
 
 	@Test
-//	@Order(5)
+	@Order(5)
 	void testSaveAndRestore() {
 		company.save(TEST_FILE_NAME);
 		company.removeAll();

@@ -16,49 +16,60 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import telran.employees.dto.Employee;
 import telran.employees.service.Company;
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CompanyTests {
-//TODO
+
 	final static String TEST_FILE_NAME = "test.data";
 	Company company;
-	Employee [] emplArray = {new Employee(1234, "Vasya", "managment", 10500, LocalDate.of(1983, 7, 10)),
+	Employee newEmployee = new Employee(2568, "Sasha", "sales", 20000, LocalDate.of(1990, 11, 12));
+	Employee[] emplArray = { new Employee(1234, "Vasya", "managment", 10500, LocalDate.of(1983, 7, 10)),
 			new Employee(1235, "Pesya", "marketing", 15500, LocalDate.of(1973, 5, 15)),
-			new Employee(2568, "Masha", "sales", 19000, LocalDate.of(1983, 1, 1))};
+			new Employee(2568, "Masha", "sales", 19000, LocalDate.of(1983, 1, 1)) };
+
 	@BeforeEach
 	void setUp() throws Exception {
 		Arrays.stream(emplArray).forEach(employee -> company.addEmployee(employee));
 	}
 
 	@Test
+	@Order(1)
 	void testAddEmployee() {
-		Employee newEmployee = new Employee(2568, "Sasha", "sales", 20000, LocalDate.of(1990, 11, 12));	
-		assertEquals(true, company.addEmployee(newEmployee));
-		assertEquals(true, company.getEmployees().contains(newEmployee));
-	} 
 
-	@Test
-	void testRemoveEmployee() {
-		//TODO
+		assertTrue(company.addEmployee(newEmployee));
+		assertTrue(company.getEmployees().contains(newEmployee));
 	}
 
-	@Test
-	void testGetEmployee() {
-		//TODO
-	}
-
-	@Test
-	void testGetEmployees() {
-		//TODO
-	}
 	@Test
 	@Order(2)
-	void testRestore() {
-		//TODO
+	void testRemoveEmployee() {
+		assertEquals(newEmployee, company.removeEmployee(2568));
+		assertFalse(company.getEmployees().contains(newEmployee));
 	}
+
 	@Test
-	@Order(1)
+	@Order(3)
+	void testGetEmployee() {
+		assertEquals(new Employee(1234, "Vasya", "managment", 10500, LocalDate.of(1983, 7, 10)),
+				company.getEmployee(1234));
+	}
+
+	@Test
+	@Order(4)
+	void testGetEmployees() {
+		assertEquals(Arrays.stream(emplArray).collect(Collectors.toList()), company.getEmployees());
+	}
+
+	@Test
+	@Order(6)
+	void testRestore() {
+		// TODO
+	}
+
+	@Test
+	@Order(5)
 	void testSave() {
-		//TODO
+		// TODO
 	}
 
 }

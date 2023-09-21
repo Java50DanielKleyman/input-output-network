@@ -3,9 +3,7 @@ package telran.employees.test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,13 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import telran.employees.dto.Employee;
-import telran.employees.service.Company;
+
+import telran.employees.service.CompanyImpl;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CompanyTests {
 
 	final static String TEST_FILE_NAME = "test.data";
-	Company company;
+	CompanyImpl company;
 	Employee newEmployee = new Employee(2568, "Sasha", "sales", 20000, LocalDate.of(1990, 11, 12));
 	Employee[] emplArray = { new Employee(1234, "Vasya", "managment", 10500, LocalDate.of(1983, 7, 10)),
 			new Employee(1235, "Pesya", "marketing", 15500, LocalDate.of(1973, 5, 15)),
@@ -35,9 +34,9 @@ class CompanyTests {
 	@Test
 	@Order(1)
 	void testAddEmployee() {
-
 		assertTrue(company.addEmployee(newEmployee));
 		assertTrue(company.getEmployees().contains(newEmployee));
+		assertFalse(company.addEmployee(newEmployee));
 	}
 
 	@Test
@@ -45,6 +44,7 @@ class CompanyTests {
 	void testRemoveEmployee() {
 		assertEquals(newEmployee, company.removeEmployee(2568));
 		assertFalse(company.getEmployees().contains(newEmployee));
+		assertEquals(null, company.removeEmployee(2568));
 	}
 
 	@Test
@@ -52,6 +52,7 @@ class CompanyTests {
 	void testGetEmployee() {
 		assertEquals(new Employee(1234, "Vasya", "managment", 10500, LocalDate.of(1983, 7, 10)),
 				company.getEmployee(1234));
+		assertEquals(null, company.getEmployee(123445));
 	}
 
 	@Test

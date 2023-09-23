@@ -3,76 +3,146 @@ package telran.employees.test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
-import telran.employees.dto.Employee;
-import telran.employees.service.Company;
-import telran.employees.service.CompanyImpl;
+import telran.employees.dto.*;
+import telran.employees.service.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CompanyTests {
+	private static final long ID1 = 123;
+	private static final String DEP1 = "dep1";
+	private static final int SALARY1 = 10000;
+	private static final int YEAR1 = 2000;
+	private static final LocalDate DATE1 = LocalDate.ofYearDay(YEAR1, 100);
+	private static final long ID2 = 124;
+	private static final long ID3 = 125;
+	private static final long ID4 = 126;
+	private static final long ID5 = 127;
+	private static final String DEP2 = "dep2";
+	private static final String DEP3 = "dep3";
+	private static final int SALARY2 = 5000;
+	private static final int SALARY3 = 15000;
+	private static final int YEAR2 = 1990;
+	private static final LocalDate DATE2 = LocalDate.ofYearDay(YEAR2, 100);
+	private static final int YEAR3 = 2003;
+	private static final LocalDate DATE3 = LocalDate.ofYearDay(YEAR3, 100);
+	private static final long ID_NOT_EXIST = 10000000;
+	private static final String TEST_DATA = "test.data";
+	Employee empl1 = new Employee(ID1, "name", DEP1, SALARY1, DATE1);
+	Employee empl2 = new Employee(ID2, "name", DEP2, SALARY2, DATE2);
+	Employee empl3 = new Employee(ID3, "name", DEP1, SALARY1, DATE1);
+	Employee empl4 = new Employee(ID4, "name", DEP2, SALARY2, DATE2);
+	Employee empl5 = new Employee(ID5, "name", DEP3, SALARY3, DATE3);
+	Employee[] employees = { empl1, empl2, empl3, empl4, empl5 };
+	Company company;
 
 	final static String TEST_FILE_NAME = "test.data";
-	Company company;
-	Employee newEmployee = new Employee(2568, "Sasha", "sales", 20000, LocalDate.of(1990, 11, 12));
-	Employee[] emplArray = { new Employee(1234, "Vasya", "managment", 10500, LocalDate.of(1983, 7, 10)),
-			new Employee(1235, "Pesya", "marketing", 15500, LocalDate.of(1973, 5, 15)),
-			new Employee(2568, "Masha", "sales", 19000, LocalDate.of(1983, 1, 1)) };
 
 	@BeforeEach
 	void setUp() throws Exception {
 		company = new CompanyImpl();
-		Arrays.stream(emplArray).forEach(employee -> company.addEmployee(employee));
+		for (Employee empl : employees) {
+			company.addEmployee(empl);
+		}
 	}
 
 	@Test
-	@Order(1)
 	void testAddEmployee() {
-		company.removeAll();
-		assertTrue(company.addEmployee(newEmployee));
-		assertTrue(company.getEmployees().contains(newEmployee));
-		assertFalse(company.addEmployee(newEmployee));
+		assertFalse(company.addEmployee(empl1));
+		assertTrue(company.addEmployee(new Employee(ID_NOT_EXIST, "name", DEP1, SALARY1, DATE1)));
+	}
+
+	@Test
+	void testRemoveEmployee() {
+		assertNull(company.removeEmployee(ID_NOT_EXIST));
+		assertEquals(empl1, company.removeEmployee(ID1));
+		Employee[] expected = { empl2, empl3, empl4, empl5 };
+		Employee[] actual = company.getEmployees().toArray(Employee[]::new);
+		Arrays.sort(actual, (e1, e2) -> Long.compare(e1.id(), e2.id()));
+		assertArrayEquals(expected, actual);
+	}
+
+	@Test
+	void testGetEmployee() {
+		assertEquals(empl1, company.getEmployee(ID1));
+		assertNull(company.getEmployee(ID_NOT_EXIST));
+	}
+
+	@Test
+	void testGetEmployees() {
+		Employee[] actual = company.getEmployees().toArray(Employee[]::new);
+		Arrays.sort(actual, (e1, e2) -> Long.compare(e1.id(), e2.id()));
+		assertArrayEquals(employees, actual);
 	}
 
 	@Test
 	@Order(2)
-	void testRemoveEmployee() {
-		assertEquals(newEmployee, company.removeEmployee(2568));
-		assertFalse(company.getEmployees().contains(newEmployee));
-		assertEquals(null, company.removeEmployee(2568));
+	void testRestore() {
+		Company newCompany = new CompanyImpl();
+		newCompany.restore(TEST_DATA);
+		Employee[] actual = newCompany.getEmployees().toArray(Employee[]::new);
+		Arrays.sort(actual, (e1, e2) -> Long.compare(e1.id(), e2.id()));
+		assertArrayEquals(employees, actual);
+
 	}
 
 	@Test
-	@Order(3)
-	void testGetEmployee() {
-		assertEquals(new Employee(1234, "Vasya", "managment", 10500, LocalDate.of(1983, 7, 10)),
-				company.getEmployee(1234));
-		assertEquals(null, company.getEmployee(123445));
+	@Order(1)
+	void testSave() {
+		company.save(TEST_DATA);
+	}
+
+	// Tests of CW/HW #34
+	@Test
+	void testGetDepartmentSalaryDistribution() {
+		// TODO
 	}
 
 	@Test
-	@Order(4)
-	void testGetEmployees() {
-		assertEquals(Arrays.stream(emplArray).collect(Collectors.toList()), company.getEmployees());
+	void testGetSalaryDistribution() {
+		company.addEmployee(new Employee(ID_NOT_EXIST, "name", DEP1, 9999, DATE1));
+		SalaryDistribution sd1 = new SalaryDistribution(5000, 10000, 3);
+		SalaryDistribution sd2 = new SalaryDistribution(10000, 15000, 2);
+		SalaryDistribution sd3 = new SalaryDistribution(15000, 20000, 1);
+		List<SalaryDistribution> expected = List.of(sd1, sd2, sd3);
+		List<SalaryDistribution> actual = company.getSalaryDistribution(5000);
+		assertIterableEquals(expected, actual);
 	}
 
 	@Test
-	@Order(5)
-	void testSaveAndRestore() {
-		company.save(TEST_FILE_NAME);
-		company.removeAll();
-		List<Employee> expectedList = Arrays.stream(emplArray).collect(Collectors.toList());
-		company.restore(TEST_FILE_NAME);		
-		assertEquals(expectedList, company.getEmployees());
+	void testGetEmployeesByDepartment() {
+		// TODO
+	}
 
+	@Test
+	void testGetEmployeesBySalary() {
+		List<Employee> expected = List.of(empl1, empl3, empl5);
+		List<Employee> actual = new ArrayList<>(company.getEmployeesBySalary(9000, 16000));
+		assertIterableEquals(expected, actual);
+	}
+
+	@Test
+	void testGetEmployeesByAge() {
+		List<Employee> expected = List.of(empl1, empl2, empl3, empl4);
+		List<Employee> actual = new ArrayList<>(company.getEmployeesByAge(22, 34));
+		actual.sort(Comparator.comparingLong(Employee::id));
+		assertIterableEquals(expected, actual);
+	}
+
+	@Test
+	void testUpdateSalary() {
+		// TODO
+	}
+
+	@Test
+	void testUpdateDepartment() {
+		// TODO
 	}
 
 }

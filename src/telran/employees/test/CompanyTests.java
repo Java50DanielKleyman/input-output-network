@@ -101,7 +101,12 @@ class CompanyTests {
 	// Tests of CW/HW #34
 	@Test
 	void testGetDepartmentSalaryDistribution() {
-		// TODO
+		DepartmentSalary ds1 = new DepartmentSalary(DEP1, SALARY1);
+		DepartmentSalary ds2 = new DepartmentSalary(DEP2, SALARY2);
+		DepartmentSalary ds3 = new DepartmentSalary(DEP3, SALARY3);
+		List<DepartmentSalary> expected = List.of(ds2, ds1,ds3);
+		List<DepartmentSalary> actual = company.getDepartmentSalaryDistribution();
+		assertIterableEquals(expected, actual);
 	}
 
 	@Test

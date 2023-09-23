@@ -148,14 +148,18 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public Employee updateSalary(long id, int newSalary) {
-		// TODO Auto-generated method stub
-		return null;
+		Employee oldEmpl = removeEmployee(id);
+		Employee newEmpl = new Employee(id, oldEmpl.name(), oldEmpl.department(), newSalary, oldEmpl.birthdate());
+		addEmployee(newEmpl);
+		return newEmpl;
 	}
 
 	@Override
 	public Employee updateDepartment(long id, String department) {
-		// TODO Auto-generated method stub
-		return null;
+		Employee oldEmpl = removeEmployee(id);
+		Employee newEmpl = new Employee(id, oldEmpl.name(), department, oldEmpl.salary(), oldEmpl.birthdate());
+		addEmployee(newEmpl);
+		return newEmpl;
 	}
 
 }

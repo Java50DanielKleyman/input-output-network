@@ -146,12 +146,24 @@ class CompanyTests {
 
 	@Test
 	void testUpdateSalary() {
-		// TODO
+		Employee empl1 = new Employee(ID1, "name", DEP1, SALARY2, DATE1);
+		Employee actualEmpl = company.updateSalary(ID1, SALARY2);
+		assertEquals(empl1, actualEmpl);
+		assertEquals(empl1.salary(), actualEmpl.salary());
+		assertEquals(empl1.department(), actualEmpl.department());
+		assertEquals(empl1.birthdate(), actualEmpl.birthdate());
+		
 	}
 
 	@Test
 	void testUpdateDepartment() {
-		// TODO
+		Employee empl1 = new Employee(ID1, "name", DEP2, SALARY1, DATE1);
+		Employee actualEmpl = company.updateDepartment(ID1, DEP2);
+		assertEquals(empl1, actualEmpl);
+		assertEquals(empl1.salary(), actualEmpl.salary());
+		assertEquals(empl1.department(), actualEmpl.department());
+		assertEquals(empl1.birthdate(), actualEmpl.birthdate());
+		
 	}
 
 }

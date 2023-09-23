@@ -3,6 +3,7 @@ package telran.employees.service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import telran.employees.dto.DepartmentSalary;
@@ -100,8 +101,16 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public List<DepartmentSalary> getDepartmentSalaryDistribution() {
-		// TODO Auto-generated method stub
-		return null;
+
+		return employeesDepartment.entrySet().stream().map(entry -> getDepartmentSalary(entry))
+				.collect(Collectors.toList());
+
+	}
+
+	private DepartmentSalary getDepartmentSalary(Entry<String, List<Employee>> entry) {
+		int sum = entry.getValue().stream().mapToInt(Employee::salary).sum();
+
+		return new DepartmentSalary(entry.getKey(), sum / entry.getValue().size());
 	}
 
 	@Override

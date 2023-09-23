@@ -103,14 +103,15 @@ public class CompanyImpl implements Company {
 	public List<DepartmentSalary> getDepartmentSalaryDistribution() {
 
 		return employeesDepartment.entrySet().stream().map(entry -> getDepartmentSalary(entry))
-				.collect(Collectors.toList());
+				.sorted((ds1, ds2) -> Double.compare(ds1.salary(), ds2.salary())).toList();
 
 	}
 
 	private DepartmentSalary getDepartmentSalary(Entry<String, List<Employee>> entry) {
 		int sum = entry.getValue().stream().mapToInt(Employee::salary).sum();
+		int averageSalary = entry.getValue().isEmpty() ? 0 : sum / entry.getValue().size();
 
-		return new DepartmentSalary(entry.getKey(), sum / entry.getValue().size());
+	    return new DepartmentSalary(entry.getKey(), averageSalary);
 	}
 
 	@Override

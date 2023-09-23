@@ -117,7 +117,11 @@ class CompanyTests {
 
 	@Test
 	void testGetEmployeesByDepartment() {
-		// TODO
+		List<Employee> expected1 = List.of(empl1, empl3);
+		List<Employee> actual1  = new ArrayList<>(company.getEmployeesByDepartment(DEP1));
+		actual1.sort(Comparator.comparingLong(Employee::id));
+		assertIterableEquals(expected1, actual1);
+		
 	}
 
 	@Test

@@ -32,21 +32,25 @@ public class CompanyImpl implements Company {
 		return res;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void addToIndexMap(Employee empl) {
-		@SuppressWarnings("rawtypes")
+
 		Stream<TreeMap> stream = Arrays.stream(arrayMap);
 		stream.forEach(map -> {
-			Object predicate;
-			if (map == employeesDepartment) {
-				predicate = (String) empl.department();
-			} else if (map == employeesSalary) {
-				predicate = (Integer) empl.salary();
-			} else {
-				predicate = getAge(empl.birthdate());
-			}
+			Object predicate = getPredicate(map, empl);
 			((List<Employee>) map.computeIfAbsent(predicate, k -> new LinkedList<>())).add(empl);
 		});
+	}
+
+	private Object getPredicate(TreeMap map, Employee empl) {
+		Object predicate;
+		if (map == employeesDepartment) {
+			predicate = (String) empl.department();
+		} else if (map == employeesSalary) {
+			predicate = (Integer) empl.salary();
+		} else {
+			predicate = getAge(empl.birthdate());
+		}
+		return predicate;
 	}
 
 //	private void addEmployeesDepartment(Employee empl) {
@@ -81,16 +85,9 @@ public class CompanyImpl implements Company {
 	}
 
 	private void removeFromIndexMap(Employee empl) {
-		 Stream<TreeMap<?, List<Employee>>> stream = Arrays.stream(arrayMap);
+		Stream<TreeMap<?, List<Employee>>> stream = Arrays.stream(arrayMap);
 		stream.forEach(map -> {
-			Object predicate;
-			if (map == employeesDepartment) {
-				predicate = (String) empl.department();
-			} else if (map == employeesSalary) {
-				predicate = (Integer) empl.salary();
-			} else {
-				predicate = getAge(empl.birthdate());
-			}			
+			Object predicate = getPredicate(map, empl);
 			List<Employee> list = (List<Employee>) map.get(predicate);
 			list.remove(empl);
 			if (list.isEmpty()) {

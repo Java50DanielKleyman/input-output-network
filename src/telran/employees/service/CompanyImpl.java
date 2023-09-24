@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import telran.employees.dto.DepartmentSalary;
 import telran.employees.dto.Employee;
@@ -15,36 +16,56 @@ public class CompanyImpl implements Company {
 	TreeMap<Integer, List<Employee>> employeesAge = new TreeMap<>();
 	TreeMap<Integer, List<Employee>> employeesSalary = new TreeMap<>();
 	TreeMap<String, List<Employee>> employeesDepartment = new TreeMap<>();
+	@SuppressWarnings("rawtypes")
+	TreeMap[] arrayMap = { employeesDepartment, employeesSalary, employeesAge };
 
 	@Override
 	public boolean addEmployee(Employee empl) {
 		boolean res = employees.putIfAbsent(empl.id(), empl) == null;
 		if (res) {
-			addEmployeesAge(empl);
-			addEmployeesSalary(empl);
-			addEmployeesDepartment(empl);
+//			addEmployeesAge(empl);
+//			addEmployeesSalary(empl);
+//			addEmployeesDepartment(empl);
+			addToIndexMap(empl);
 		}
 
 		return res;
 	}
 
-	private void addEmployeesDepartment(Employee empl) {
-		String department = empl.department();
-		employeesDepartment.computeIfAbsent(department, k -> new LinkedList<>()).add(empl);
-
+	@SuppressWarnings("unchecked")
+	private void addToIndexMap(Employee empl) {
+		@SuppressWarnings("rawtypes")
+		Stream<TreeMap> stream = Arrays.stream(arrayMap);
+		stream.forEach(map -> {
+			Object predicate;
+			if (map == employeesDepartment) {
+				predicate = (String) empl.department();
+			} else if (map == employeesSalary) {
+				predicate = (Integer) empl.salary();
+			} else {
+				predicate = getAge(empl.birthdate());
+			}
+			((List<Employee>) map.computeIfAbsent(predicate, k -> new LinkedList<>())).add(empl);
+		});
 	}
 
-	private void addEmployeesSalary(Employee empl) {
-		int salary = empl.salary();
-		employeesSalary.computeIfAbsent(salary, k -> new LinkedList<>()).add(empl);
-
-	}
-
-	private void addEmployeesAge(Employee empl) {
-		int age = getAge(empl.birthdate());
-		employeesAge.computeIfAbsent(age, k -> new LinkedList<>()).add(empl);
-
-	}
+//	private void addEmployeesDepartment(Employee empl) {
+//		String department = empl.department();
+//		employeesDepartment.computeIfAbsent(department, k -> new LinkedList<>()).add(empl);
+//
+//	}
+//
+//	private void addEmployeesSalary(Employee empl) {
+//		int salary = empl.salary();
+//		employeesSalary.computeIfAbsent(salary, k -> new LinkedList<>()).add(empl);
+//
+//	}
+//
+//	private void addEmployeesAge(Employee empl) {
+//		int age = getAge(empl.birthdate());
+//		employeesAge.computeIfAbsent(age, k -> new LinkedList<>()).add(empl);
+//
+//	}
 
 	@Override
 	public Employee removeEmployee(long id) {
@@ -111,7 +132,7 @@ public class CompanyImpl implements Company {
 		int sum = entry.getValue().stream().mapToInt(Employee::salary).sum();
 		int averageSalary = entry.getValue().isEmpty() ? 0 : sum / entry.getValue().size();
 
-	    return new DepartmentSalary(entry.getKey(), averageSalary);
+		return new DepartmentSalary(entry.getKey(), averageSalary);
 	}
 
 	@Override

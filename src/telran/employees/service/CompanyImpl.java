@@ -94,7 +94,7 @@ public class CompanyImpl implements Company {
 			List<Employee> list = (List<Employee>) map.get(predicate);
 			list.remove(empl);
 			if (list.isEmpty()) {
-				employeesDepartment.remove(map.get(predicate));
+				employeesDepartment.remove(predicate);
 			}
 		});
 

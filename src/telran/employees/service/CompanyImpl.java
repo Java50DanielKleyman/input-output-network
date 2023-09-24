@@ -71,43 +71,65 @@ public class CompanyImpl implements Company {
 	public Employee removeEmployee(long id) {
 		Employee empl = employees.remove(id);
 		if (empl != null) {
-			removeEmployeeAge(empl);
-			removeEmployeeSalary(empl);
-			removeEmployeeDepartment(empl);
+//			removeEmployeeAge(empl);
+//			removeEmployeeSalary(empl);
+//			removeEmployeeDepartment(empl);
+			removeFromIndexMap(empl);
 		}
 
 		return empl;
 	}
 
-	private void removeEmployeeDepartment(Employee empl) {
-		String department = empl.department();
-		List<Employee> list = employeesDepartment.get(department);
-		list.remove(empl);
-		if (list.isEmpty()) {
-			employeesDepartment.remove(department);
-		}
+	private void removeFromIndexMap(Employee empl) {
+		Stream<TreeMap> stream = Arrays.stream(arrayMap);
+		stream.forEach(map -> {
+			Object predicate;
+			if (map == employeesDepartment) {
+				predicate = (String) empl.department();
+			} else if (map == employeesSalary) {
+				predicate = (Integer) empl.salary();
+			} else {
+				predicate = getAge(empl.birthdate());
+			}
+			@SuppressWarnings("unchecked")
+			List<Employee> list = (List<Employee>) map.get(predicate);
+			list.remove(empl);
+			if (list.isEmpty()) {
+				employeesDepartment.remove(map.get(predicate));
+			}
+		});
 
 	}
 
-	private void removeEmployeeSalary(Employee empl) {
-		int salary = empl.salary();
-		List<Employee> list = employeesSalary.get(salary);
-		list.remove(empl);
-		if (list.isEmpty()) {
-			employeesSalary.remove(salary);
-		}
-
-	}
-
-	private void removeEmployeeAge(Employee empl) {
-		int age = getAge(empl.birthdate());
-		List<Employee> list = employeesAge.get(age);
-		list.remove(empl);
-		if (list.isEmpty()) {
-			employeesAge.remove(age);
-		}
-
-	}
+//	private void removeEmployeeDepartment(Employee empl) {
+//		String department = empl.department();
+//		List<Employee> list = employeesDepartment.get(department);
+//		list.remove(empl);
+//		if (list.isEmpty()) {
+//			employeesDepartment.remove(department);
+//		}
+//
+//	}
+//
+//	private void removeEmployeeSalary(Employee empl) {
+//		int salary = empl.salary();
+//		List<Employee> list = employeesSalary.get(salary);
+//		list.remove(empl);
+//		if (list.isEmpty()) {
+//			employeesSalary.remove(salary);
+//		}
+//
+//	}
+//
+//	private void removeEmployeeAge(Employee empl) {
+//		int age = getAge(empl.birthdate());
+//		List<Employee> list = employeesAge.get(age);
+//		list.remove(empl);
+//		if (list.isEmpty()) {
+//			employeesAge.remove(age);
+//		}
+//
+//	}
 
 	@Override
 	public Employee getEmployee(long id) {

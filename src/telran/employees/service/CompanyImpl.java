@@ -81,7 +81,7 @@ public class CompanyImpl implements Company {
 	}
 
 	private void removeFromIndexMap(Employee empl) {
-		Stream<TreeMap> stream = Arrays.stream(arrayMap);
+		 Stream<TreeMap<?, List<Employee>>> stream = Arrays.stream(arrayMap);
 		stream.forEach(map -> {
 			Object predicate;
 			if (map == employeesDepartment) {
@@ -90,12 +90,11 @@ public class CompanyImpl implements Company {
 				predicate = (Integer) empl.salary();
 			} else {
 				predicate = getAge(empl.birthdate());
-			}
-			@SuppressWarnings("unchecked")
+			}			
 			List<Employee> list = (List<Employee>) map.get(predicate);
 			list.remove(empl);
 			if (list.isEmpty()) {
-				employeesDepartment.remove(map.get(predicate));
+				employeesDepartment.remove(map.remove(predicate));
 			}
 		});
 

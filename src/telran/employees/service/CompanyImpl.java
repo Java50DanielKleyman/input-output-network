@@ -3,165 +3,63 @@ package telran.employees.service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import telran.employees.dto.DepartmentSalary;
 import telran.employees.dto.Employee;
 import telran.employees.dto.SalaryDistribution;
 
 public class CompanyImpl implements Company {
-	HashMap<Long, Employee> employees = new HashMap<>(); // most effective structure for the interface methods
-	TreeMap<Integer, List<Employee>> employeesAge = new TreeMap<>();
+	HashMap<Long, Employee> employees = new HashMap<>(); //most effective structure for the interface methods
+	TreeMap<LocalDate, List<Employee>> employeesDate = new TreeMap<>();
 	TreeMap<Integer, List<Employee>> employeesSalary = new TreeMap<>();
-	TreeMap<String, List<Employee>> employeesDepartment = new TreeMap<>();
-	@SuppressWarnings("rawtypes")
-	TreeMap[] arrayMap = { employeesDepartment, employeesSalary, employeesAge };
-	IdentityHashMap<Object, Object> identityMap = new IdentityHashMap<>();
-
+	HashMap<String, List<Employee>> employeesDepartment = new HashMap<>();
 	@Override
 	public boolean addEmployee(Employee empl) {
 		boolean res = employees.putIfAbsent(empl.id(), empl) == null;
 		if (res) {
-//			addEmployeesAge(empl);
-//			addEmployeesSalary(empl);
-//			addEmployeesDepartment(empl);
-			addToIndexMap(empl);
+			LocalDate date = empl.birthdate(); 
+			Integer salary = empl.salary();
+			String department = empl.department();
+			addToIndex(empl, date, employeesDate);
+			addToIndex(empl, salary, employeesSalary);
+			addToIndex(empl, department, employeesDepartment);
 		}
-
+		
 		return res;
 	}
 
-	private void addToIndexMap(Employee empl) {
-		identityMap.put(employeesAge, getAge(empl.birthdate()));
-		identityMap.put(employeesSalary, empl.salary());
-		identityMap.put(employeesDepartment, empl.department());
-
-		for (Entry<Object, Object> entry : identityMap.entrySet()) {
-			Object key = entry.getKey();
-			Object value = entry.getValue();
-
-			if (key instanceof TreeMap && value != null) {
-				TreeMap<Object, List<Employee>> map = (TreeMap<Object, List<Employee>>) key;
-				map.computeIfAbsent(value, k -> new LinkedList<>()).add(empl);
-			}
-		}
-//		Stream<TreeMap> stream = Arrays.stream(arrayMap);
-//		stream.forEach(map -> {
-//			Object predicate = getPredicate(map, empl);
-//			((List<Employee>) map.computeIfAbsent(predicate, k -> new LinkedList<>())).add(empl);
-//		});
+	private <T> void addToIndex(Employee empl, T key, Map<T, List<Employee>> map) {
+		map.computeIfAbsent(key, k -> new LinkedList<>()).add(empl);
 	}
-
-//	@SuppressWarnings("unused")
-//	private Object getPredicate(TreeMap map, Employee empl) {
-//		Object predicate;
-//		if (map == employeesDepartment) {
-//			predicate = (String) empl.department();
-//		} else if (map == employeesSalary) {
-//			predicate = (Integer) empl.salary();
-//		} else {
-//			predicate = getAge(empl.birthdate());
-//		}
-//		return predicate;
-//	}
-
-//	private void addEmployeesDepartment(Employee empl) {
-//		String department = empl.department();
-//		employeesDepartment.computeIfAbsent(department, k -> new LinkedList<>()).add(empl);
-//
-//	}
-//
-//	private void addEmployeesSalary(Employee empl) {
-//		int salary = empl.salary();
-//		employeesSalary.computeIfAbsent(salary, k -> new LinkedList<>()).add(empl);
-//
-//	}
-//
-//	private void addEmployeesAge(Employee empl) {
-//		int age = getAge(empl.birthdate());
-//		employeesAge.computeIfAbsent(age, k -> new LinkedList<>()).add(empl);
-//
-//	}
 
 	@Override
 	public Employee removeEmployee(long id) {
 		Employee empl = employees.remove(id);
-		if (empl != null) {
-//			removeEmployeeAge(empl);
-//			removeEmployeeSalary(empl);
-//			removeEmployeeDepartment(empl);
-			removeFromIndexMap(empl);
+		if(empl != null) {
+			LocalDate date = empl.birthdate(); 
+			Integer salary = empl.salary();
+			String department = empl.department();
+			removeFromIndex(empl, date, employeesDate);
+			removeFromIndex(empl, salary, employeesSalary);
+			removeFromIndex(empl, department, employeesDepartment);
 		}
-
+		
 		return empl;
 	}
 
-	private void removeFromIndexMap(Employee empl) {
-		identityMap.put(employeesAge, getAge(empl.birthdate()));
-		identityMap.put(employeesSalary, empl.salary());
-		identityMap.put(employeesDepartment, empl.department());
+	private <T> void removeFromIndex(Employee empl, T key, Map<T, List<Employee>> map) {
 
-		for (Entry<Object, Object> entry : identityMap.entrySet()) {
-			Object key = entry.getKey();
-			Object value = entry.getValue();
-
-			if (key instanceof TreeMap && value != null) {
-				@SuppressWarnings("unchecked")
-				TreeMap<Object, List<Employee>> map = (TreeMap<Object, List<Employee>>) key;
-				map.computeIfAbsent(value, k -> new LinkedList<>()).remove(empl);
-				if (map.get(value).isEmpty()) {
-					map.get(value).remove(value);
-				}
-			}
-
+		List<Employee> employeesCol = map.get(key);
+		employeesCol.remove(empl);
+		if (employeesCol.isEmpty()) {
+			map.remove(key);
 		}
-//		Stream<TreeMap<?, List<Employee>>> stream = Arrays.stream(arrayMap);
-//		stream.forEach(map -> {
-//			Object predicate = getPredicate(map, empl);
-//			List<Employee> list = (List<Employee>) map.get(predicate);
-//			list.remove(empl);
-//			if (list.isEmpty()) {
-//				employeesDepartment.remove(predicate);
-//			}
-//		});
-
 	}
-
-//	private void removeEmployeeDepartment(Employee empl) {
-//		String department = empl.department();
-//		List<Employee> list = employeesDepartment.get(department);
-//		list.remove(empl);
-//		if (list.isEmpty()) {
-//			employeesDepartment.remove(department);
-//		}
-//
-//	}
-//
-//	private void removeEmployeeSalary(Employee empl) {
-//		int salary = empl.salary();
-//		List<Employee> list = employeesSalary.get(salary);
-//		list.remove(empl);
-//		if (list.isEmpty()) {
-//			employeesSalary.remove(salary);
-//		}
-//
-//	}
-//
-//	private void removeEmployeeAge(Employee empl) {
-//		int age = getAge(empl.birthdate());
-//		List<Employee> list = employeesAge.get(age);
-//		list.remove(empl);
-//		if (list.isEmpty()) {
-//			employeesAge.remove(age);
-//		}
-//
-//	}
 
 	@Override
 	public Employee getEmployee(long id) {
-
+		
 		return employees.get(id);
 	}
 
@@ -172,65 +70,74 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public List<DepartmentSalary> getDepartmentSalaryDistribution() {
-
-		return employeesDepartment.entrySet().stream().map(entry -> getDepartmentSalary(entry))
-				.sorted((ds1, ds2) -> Double.compare(ds1.salary(), ds2.salary())).toList();
-
-	}
-
-	private DepartmentSalary getDepartmentSalary(Entry<String, List<Employee>> entry) {
-		int sum = entry.getValue().stream().mapToInt(Employee::salary).sum();
-		int averageSalary = entry.getValue().isEmpty() ? 0 : sum / entry.getValue().size();
-
-		return new DepartmentSalary(entry.getKey(), averageSalary);
+		return new LinkedList<>(employees.values().stream()
+				.collect(Collectors.groupingBy(Employee::department, Collectors.averagingInt(Employee::salary)))
+				.entrySet().stream().map(e -> new DepartmentSalary(e.getKey(), e.getValue())).toList());
 	}
 
 	@Override
 	public List<SalaryDistribution> getSalaryDistribution(int interval) {
 		Map<Integer, Long> mapIntervalNumbers = employees.values().stream()
 				.collect(Collectors.groupingBy(e -> e.salary() / interval, Collectors.counting()));
-		return mapIntervalNumbers
-				.entrySet().stream().map(e -> new SalaryDistribution(e.getKey() * interval,
-						e.getKey() * interval + interval, e.getValue().intValue()))
+		return mapIntervalNumbers.entrySet().stream()
+				.map(e -> new SalaryDistribution(e.getKey() * interval, e.getKey() * interval + interval, e.getValue().intValue()))
 				.sorted((sd1, sd2) -> Integer.compare(sd1.min(), sd2.min())).toList();
 	}
 
 	@Override
 	public List<Employee> getEmployeesByDepartment(String department) {
-		return employeesDepartment.get(department);
+		Collection<Employee> employeesCol = employeesDepartment.get(department);
+		ArrayList<Employee> res = new ArrayList<>();
+		if (employeesCol != null) {
+			res.addAll(employeesCol);
+		}
+		return res;
 	}
 
 	@Override
 	public List<Employee> getEmployeesBySalary(int salaryFrom, int salaryTo) {
-
-		return employeesSalary.subMap(salaryFrom, salaryTo).values().stream().flatMap(List::stream).toList();
+		return employeesSalary.subMap(salaryFrom,  salaryTo).values().stream()
+				.flatMap(col -> col.stream())
+				.toList();
 	}
 
 	@Override
 	public List<Employee> getEmployeesByAge(int ageFrom, int ageTo) {
-
-		return employeesAge.subMap(ageFrom, ageTo).values().stream().flatMap(List::stream).toList();
+		
+		LocalDate dateFrom = getDate(ageTo);
+		LocalDate dateTo = getDate(ageFrom);
+		return employeesDate.subMap(dateFrom, dateTo).values().stream().flatMap(List::stream).toList();
 	}
 
-	private int getAge(LocalDate birthDate) {
-
-		return (int) ChronoUnit.YEARS.between(birthDate, LocalDate.now());
+	private LocalDate getDate(int age) {
+		LocalDate currentDate = LocalDate.now();
+		
+		return currentDate.minusYears(age);
 	}
+
+	
+	
 
 	@Override
 	public Employee updateSalary(long id, int newSalary) {
-		Employee oldEmpl = removeEmployee(id);
-		Employee newEmpl = new Employee(id, oldEmpl.name(), oldEmpl.department(), newSalary, oldEmpl.birthdate());
-		addEmployee(newEmpl);
-		return newEmpl;
+		Employee empl = removeEmployee(id);
+		if(empl != null) {
+			Employee newEmployee = new Employee(id, empl.name(),
+					empl.department(), newSalary, empl.birthdate());
+			addEmployee(newEmployee);
+		}
+		return empl;
 	}
 
 	@Override
 	public Employee updateDepartment(long id, String department) {
-		Employee oldEmpl = removeEmployee(id);
-		Employee newEmpl = new Employee(id, oldEmpl.name(), department, oldEmpl.salary(), oldEmpl.birthdate());
-		addEmployee(newEmpl);
-		return newEmpl;
+		Employee empl = removeEmployee(id);
+		if(empl != null) {
+			Employee newEmployee = new Employee(id, empl.name(),
+					department, empl.salary(), empl.birthdate());
+			addEmployee(newEmployee);
+		}
+		return empl;
 	}
 
 }

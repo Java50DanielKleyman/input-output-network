@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,18 +16,19 @@ import telran.view.*;
 
 class InputOutputTest {
 	InputOutput io = new SystemInputOutput();
-	 String myInput = "Peter#2000-01-01#devops#50000\r\n" +
-             "123#Peter#2000-01-01#devops#50000\r\n";
+	String myInput = "Peter#2000-01-01#devops#50000\n" + "123#Peter#2000-15-01#devops#50000\n"
+			+ "123#Peter#2000-01-01#devops#50000\n";
 
 	@BeforeEach
 	void setUp() throws Exception {
-		
+
 		System.out.println("===>Redirect");
 		InputStream myIn = new ByteArrayInputStream(myInput.getBytes());
 		System.setIn(myIn);
 		io = new SystemInputOutput();
 
 	}
+
 	@AfterEach
 	void endTest() throws Exception {
 		System.out.println("===>Restore");
@@ -46,7 +48,12 @@ class InputOutputTest {
 					String name = tokens[1];
 					String department = tokens[3];
 					int salary = Integer.parseInt(tokens[4]);
-					LocalDate birthDate = LocalDate.parse(tokens[2]);
+					LocalDate birthDate = null;
+					try {
+						birthDate = LocalDate.parse(tokens[2]);
+					} catch (DateTimeParseException e) {
+						throw new RuntimeException("Invalid date format");
+					}
 					return new Employee(id, name, department, salary, birthDate);
 				});
 		io.writeObjectLine(empl);

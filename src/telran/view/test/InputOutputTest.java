@@ -19,7 +19,7 @@ class InputOutputTest {
              "123#Peter#2000-01-01#devops#50000\r\n";
 
 	@BeforeEach
-	void setUp(String myInput) throws Exception {
+	void setUp() throws Exception {
 		
 		System.out.println("===>Redirect");
 		InputStream myIn = new ByteArrayInputStream(myInput.getBytes());
@@ -27,12 +27,12 @@ class InputOutputTest {
 		io = new SystemInputOutput();
 
 	}
-//	@AfterEach
-//	void endTest() throws Exception {
-//		System.out.println("===>Restore");
-//		System.setIn(System.in);
-//		io = new SystemInputOutput();
-//	}
+	@AfterEach
+	void endTest() throws Exception {
+		System.out.println("===>Restore");
+		System.setIn(System.in);
+		io = new SystemInputOutput();
+	}
 
 	@Test
 	void testReadEmployeeString() throws Exception {

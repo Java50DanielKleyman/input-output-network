@@ -84,9 +84,8 @@ class InputOutputTest {
 							"department must be one out of QA, Development, Audit, Accounting, Management",
 							getHashSet());
 					int salary = io.readInt(tokens[4], "salary must be integer number in range [7000 - 50000]", 7000,
-							50000);
-					LocalDate birthDate = null;
-					birthDate = io.readIsoDate(tokens[2], "birthDate must be in range [1950-12-31 - 2003-12-31]",
+							50000);					
+					 LocalDate birthDate = io.readIsoDate(tokens[2], "birthDate must be in range [1950-12-31 - 2003-12-31]",
 							LocalDate.of(1950, 12, 31), LocalDate.of(2003, 12, 31));
 
 					return new Employee(id, name, department, salary, birthDate);

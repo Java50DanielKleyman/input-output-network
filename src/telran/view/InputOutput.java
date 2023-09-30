@@ -58,8 +58,7 @@ public interface InputOutput {
 		//TODO if (pattern.test(prompt))
 		return null;
 	}
-	default String readString(String prompt, String errorPrompt,
- options){
+	default String readString(String prompt, String errorPrompt, HashSet<String> options){
 		//TODO
 		return null;
 	}

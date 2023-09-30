@@ -75,23 +75,20 @@ class InputOutputTest {
 					String[] tokens = str.split("#");
 					if (tokens.length != 5) {
 						throw new RuntimeException("must be 5 tokens");
-					}
-					;
+					};
 					long id = io.readLong(tokens[0], "It is not a Long number", 100000, 999999);
 					Predicate<String> pattern = input -> input.matches("[A-Z][a-zA-Z]+");
 					String name = io.readString(tokens[1],
 							"name must contain more than two letters where first one is a capital", pattern);
-
 					String department = io.readString(tokens[3],
-							"department must be one out of QA, " + "Development, Audit, Accounting, Management",
+							"department must be one out of QA, Development, Audit, Accounting, Management",
 							getHashSet());
-					int salary = Integer.parseInt(tokens[4]);
+					int salary = io.readInt(tokens[4], "salary must be integer number in range [7000 - 50000]", 7000,
+							50000);
 					LocalDate birthDate = null;
-					try {
-						birthDate = LocalDate.parse(tokens[2]);
-					} catch (DateTimeParseException e) {
-						throw new RuntimeException("Invalid date format");
-					}
+					birthDate = io.readIsoDate(tokens[2], "birthDate must be in range [1950-12-31 - 2003-12-31]",
+							LocalDate.of(1950, 12, 31), LocalDate.of(2003, 12, 31));
+
 					return new Employee(id, name, department, salary, birthDate);
 				});
 		io.writeObjectLine(empl);

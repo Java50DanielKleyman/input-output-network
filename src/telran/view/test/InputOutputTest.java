@@ -6,6 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.HashSet;
+import java.util.function.Predicate;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,11 +59,10 @@ class InputOutputTest {
 					return new Employee(id, name, department, salary, birthDate);
 				});
 		io.writeObjectLine(empl);
-		System.out.flush();
 	}
 
 //	@Test
-	void testReadEmployeeBySeparateField() {
+	void testReadEmployeeBySeparateField() throws Exception {
 		// TODO
 		// id in range [100000-999999]
 		// name - more than two letters where first one is a capital
@@ -69,6 +70,41 @@ class InputOutputTest {
 		// department - one out of ["QA", "Development", "Audit", "Accounting",
 		// "Management"
 		// salary - integer number in range [7000 - 50000]
+		Employee empl = io.readObject("Enter employee <id>#<name>#<iso birthdate>#<department>#<salary>",
+				"Wrong Employee", str -> {
+					String[] tokens = str.split("#");
+					if (tokens.length != 5) {
+						throw new RuntimeException("must be 5 tokens");
+					}
+					;
+					long id = io.readInt(tokens[0], "It is not an integer number", 100000, 999999);
+					Predicate<String> pattern = "hbkhk";
+					String name = io.readString(tokens[1],
+							"name must contain more than two letters where first one is a capital", pattern);
+
+					String department = io.readString(tokens[3],
+							"department must be one out of QA, " + "Development, Audit, Accounting, Management",
+							getHashSet());
+					int salary = Integer.parseInt(tokens[4]);
+					LocalDate birthDate = null;
+					try {
+						birthDate = LocalDate.parse(tokens[2]);
+					} catch (DateTimeParseException e) {
+						throw new RuntimeException("Invalid date format");
+					}
+					return new Employee(id, name, department, salary, birthDate);
+				});
+		io.writeObjectLine(empl);
+	}
+
+	private HashSet<String> getHashSet() {
+		HashSet<String> options = new HashSet<>();
+		options.add("QA");
+		options.add("Development");
+		options.add("Audit");
+		options.add("Accounting");
+		options.add("Management");
+		return options;
 	}
 
 //	@Test

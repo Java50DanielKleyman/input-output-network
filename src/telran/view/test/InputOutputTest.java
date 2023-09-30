@@ -77,8 +77,8 @@ class InputOutputTest {
 						throw new RuntimeException("must be 5 tokens");
 					}
 					;
-					long id = io.readInt(tokens[0], "It is not an integer number", 100000, 999999);
-					Predicate<String> pattern = "hbkhk";
+					long id = io.readLong(tokens[0], "It is not a Long number", 100000, 999999);
+					Predicate<String> pattern = input -> input.matches("[A-Z][a-zA-Z]+");
 					String name = io.readString(tokens[1],
 							"name must contain more than two letters where first one is a capital", pattern);
 

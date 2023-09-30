@@ -55,10 +55,11 @@ public interface InputOutput {
 		return readObject(prompt, errorPrompt, Double::parseDouble);
 	}
 	default String readString (String prompt, String errorPrompt, Predicate<String> pattern){
-		//TODO
+		//TODO if (pattern.test(prompt))
 		return null;
 	}
-	default String readString(String prompt, String errorPrompt, HashSet<String> options){
+	default String readString(String prompt, String errorPrompt,
+ options){
 		//TODO
 		return null;
 	}

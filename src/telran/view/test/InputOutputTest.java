@@ -1,8 +1,6 @@
 package telran.view.test;
 
 import telran.view.InputOutput;
-import telran.view.InputOutput.DataParser;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
@@ -21,29 +19,27 @@ import telran.view.*;
 
 class InputOutputTest {
 	InputOutput io = new SystemInputOutput();
-	String myInput = "Peter#2000-01-01#devops#50000\n" + "123#Peter#2000-11-01#devops#50000\n"
-			+ "123#Peter#2000-01-01#devops#50000\n";
+	String myInput = "Peter#2000-01-01#QA#50000\n" + "121117#Peter#2000-11-01#devops#50000\n"
+			+ "123111#Peter#2000-01-01#QA#50000\n";
 
 	@BeforeEach
-//	void setUp() throws Exception {
-//
-//		System.out.println("===>Redirect");
-//		InputStream myIn = new ByteArrayInputStream(myInput.getBytes());
-//		System.setIn(myIn);
-//		io = new SystemInputOutput();
-//
-//	}
 	void setUp() throws Exception {
 
-	}
-//	@AfterEach
-//	void endTest() throws Exception {
-//		System.out.println("===>Restore");
-//		System.setIn(System.in);
-//		io = new SystemInputOutput();
-//	}
+		System.out.println("===>Redirect");
+		InputStream myIn = new ByteArrayInputStream(myInput.getBytes());
+		System.setIn(myIn);
+		io = new SystemInputOutput();
 
-//	@Test
+	}
+
+	@AfterEach
+	void endTest() throws Exception {
+		System.out.println("===>Restore");
+		System.setIn(System.in);
+		io = new SystemInputOutput();
+	}
+
+	@Test
 	void testReadEmployeeString() throws Exception {
 		Employee empl = io.readObject("Enter employee <id>#<name>#<iso birthdate>#<department>#<salary>",
 				"Wrong Employee", str -> {
@@ -93,8 +89,8 @@ class InputOutputTest {
 					String department = io.readString(tokens[3],
 							"department must be one out of QA, Development, Audit, Accounting, Management",
 							getHashSet());
-					int salary = io.readDataMinMax(tokens[4],
-							"salary must be integer number in range [7000 - 50000]", 7000, 50000);
+					int salary = io.readDataMinMax(tokens[4], "salary must be integer number in range [7000 - 50000]",
+							7000, 50000);
 
 					return new Employee(id, name, department, salary, birthDate);
 				});

@@ -111,14 +111,14 @@ class InputOutputTest {
 
 	@Test
 	void testSimpleArithmeticCalculator() {
-		int res = io.readObject("Enter number# enter operation# enter number", "Error",
+		int res = io.readObject("Enter number#enter operation#enter number", "Error",
 				str -> {
 					String[] tokens = str.split("#");
 					if (tokens.length != 3) {
 						throw new RuntimeException("must be 3 tokens");
 					}
-					int firstNumber = io.readInt(tokens[0], "not a number");
-					int secondNumber = io.readInt(tokens[2], "not a number");
+					int firstNumber = Integer.parseInt(tokens[0]);
+					int secondNumber = Integer.parseInt(tokens[2]);
 					int result;
 					switch (tokens[1]) {
 					case "+":

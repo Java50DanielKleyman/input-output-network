@@ -10,6 +10,8 @@ import java.time.format.DateTimeParseException;
 import java.util.HashSet;
 import java.util.function.Predicate;
 
+import javax.management.RuntimeErrorException;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,21 +27,21 @@ class InputOutputTest {
 	@BeforeEach
 	void setUp() throws Exception {
 
-		System.out.println("===>Redirect");
-		InputStream myIn = new ByteArrayInputStream(myInput.getBytes());
-		System.setIn(myIn);
-		io = new SystemInputOutput();
+//		System.out.println("===>Redirect");
+//		InputStream myIn = new ByteArrayInputStream(myInput.getBytes());
+//		System.setIn(myIn);
+//		io = new SystemInputOutput();
 
 	}
 
-	@AfterEach
-	void endTest() throws Exception {
-		System.out.println("===>Restore");
-		System.setIn(System.in);
-		io = new SystemInputOutput();
-	}
+//	@AfterEach
+//	void endTest() throws Exception {
+//		System.out.println("===>Restore");
+//		System.setIn(System.in);
+//		io = new SystemInputOutput();
+//	}
 
-	@Test
+//	@Test
 	void testReadEmployeeString() throws Exception {
 		Employee empl = io.readObject("Enter employee <id>#<name>#<iso birthdate>#<department>#<salary>",
 				"Wrong Employee", str -> {
@@ -62,7 +64,7 @@ class InputOutputTest {
 		io.writeObjectLine(empl);
 	}
 
-	@Test
+//	@Test
 	void testReadEmployeeBySeparateField() throws Exception {
 		// TODO
 		// id in range [100000-999999]
@@ -107,9 +109,43 @@ class InputOutputTest {
 		return options;
 	}
 
-//	@Test
+	@Test
 	void testSimpleArithmeticCalculator() {
-		// TODO
+		int res = io.readObject("Enter number# enter operation# enter number", "Error",
+				str -> {
+					String[] tokens = str.split("#");
+					if (tokens.length != 3) {
+						throw new RuntimeException("must be 3 tokens");
+					}
+					int firstNumber = io.readInt(tokens[0], "not a number");
+					int secondNumber = io.readInt(tokens[2], "not a number");
+					int result;
+					switch (tokens[1]) {
+					case "+":
+						result = firstNumber + secondNumber;
+						break;
+					case "-":
+						result = firstNumber - secondNumber;
+						break;
+					case "*":
+						result = firstNumber * secondNumber;
+						break;
+					case "/":
+						if (secondNumber == 0) {
+							throw new RuntimeException("Divizion by zero");
+						}
+						result = firstNumber / secondNumber;
+						break;
+					default:
+						throw new RuntimeException("Invalid operator: " + tokens[1]);
+
+					}
+					;
+
+					return result;
+				});
+		io.writeObjectLine(res);
+
 	}
 
 }

@@ -57,6 +57,7 @@ public interface InputOutput {
 	}
 
 	default Long readLong(String prompt, String errorPrompt, long min, long max) {
+		
 		long res = Long.parseLong(prompt);
 		if (res < min || res > max) {
 			throw new RuntimeException(errorPrompt);

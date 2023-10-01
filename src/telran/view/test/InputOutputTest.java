@@ -111,39 +111,47 @@ class InputOutputTest {
 
 	@Test
 	void testSimpleArithmeticCalculator() {
-		int res = io.readObject("Enter number#enter operation#enter number", "Error",
-				str -> {
-					String[] tokens = str.split("#");
-					if (tokens.length != 3) {
-						throw new RuntimeException("must be 3 tokens");
-					}
-					int firstNumber = Integer.parseInt(tokens[0]);
-					int secondNumber = Integer.parseInt(tokens[2]);
-					int result;
-					switch (tokens[1]) {
-					case "+":
-						result = firstNumber + secondNumber;
-						break;
-					case "-":
-						result = firstNumber - secondNumber;
-						break;
-					case "*":
-						result = firstNumber * secondNumber;
-						break;
-					case "/":
-						if (secondNumber == 0) {
-							throw new RuntimeException("Divizion by zero");
-						}
-						result = firstNumber / secondNumber;
-						break;
-					default:
-						throw new RuntimeException("Invalid operator: " + tokens[1]);
+		int res = io.readObject("Enter number#enter operation#enter number", "Error", str -> {
+			String[] tokens = str.split("#");
+			if (tokens.length != 3) {
+				throw new RuntimeException("must be 3 tokens");
+			}
+			int firstNumber;
+			int secondNumber;
+			try {
+				firstNumber = Integer.parseInt(tokens[0]);
+			} catch (RuntimeException e) {
+				throw new RuntimeException("not an integer number " + tokens[0]);
+			}
+			try {
+				secondNumber = Integer.parseInt(tokens[2]);
+			} catch (RuntimeException e) {
+				throw new RuntimeException("not an integer number " + tokens[2]);
+			}
+			int result;
+			switch (tokens[1]) {
+			case "+":
+				result = firstNumber + secondNumber;
+				break;
+			case "-":
+				result = firstNumber - secondNumber;
+				break;
+			case "*":
+				result = firstNumber * secondNumber;
+				break;
+			case "/":
+				if (secondNumber == 0) {
+					throw new RuntimeException("Divizion by zero");
+				}
+				result = firstNumber / secondNumber;
+				break;
+			default:
+				throw new RuntimeException("Invalid operator: " + tokens[1]);
+			}
+			;
 
-					}
-					;
-
-					return result;
-				});
+			return result;
+		});
 		io.writeObjectLine(res);
 
 	}

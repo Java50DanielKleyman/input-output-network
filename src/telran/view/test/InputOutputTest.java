@@ -1,5 +1,8 @@
 package telran.view.test;
 
+import telran.view.InputOutput;
+import telran.view.InputOutput.DataParser;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
@@ -30,8 +33,8 @@ class InputOutputTest {
 //		io = new SystemInputOutput();
 //
 //	}
-	void setUp() throws Exception{
-		
+	void setUp() throws Exception {
+
 	}
 //	@AfterEach
 //	void endTest() throws Exception {
@@ -77,20 +80,21 @@ class InputOutputTest {
 					String[] tokens = str.split("#");
 					if (tokens.length != 5) {
 						throw new RuntimeException("must be 5 tokens");
-					};
-				
-					long id = io.readLong(tokens[0], "It is not a Long number", 100000, 999999);
+					}
+					;
+
+					long id = io.readDataMinMax(tokens[0], "It is not a Long number", 100000, 999999);
 					Predicate<String> pattern = input -> input.matches("[A-Z][a-zA-Z]+");
 					String name = io.readString(tokens[1],
 							"name must contain more than two letters where first one is a capital", pattern);
-					 LocalDate birthDate = io.readIsoDate(tokens[2], "birthDate must be in range [1950-12-31 - 2003-12-31]",
-								LocalDate.of(1950, 12, 31), LocalDate.of(2003, 12, 31));
+					LocalDate birthDate = (LocalDate) io.readDataMinMax(tokens[2],
+							"birthDate must be in range [1950-12-31 - 2003-12-31]", LocalDate.of(1950, 12, 31),
+							LocalDate.of(2003, 12, 31));
 					String department = io.readString(tokens[3],
 							"department must be one out of QA, Development, Audit, Accounting, Management",
 							getHashSet());
-					int salary = io.readInt(tokens[4], "salary must be integer number in range [7000 - 50000]", 7000,
-							50000);					
-					
+					int salary = io.readDataMinMax(tokens[4],
+							"salary must be integer number in range [7000 - 50000]", 7000, 50000);
 
 					return new Employee(id, name, department, salary, birthDate);
 				});

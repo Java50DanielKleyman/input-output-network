@@ -57,7 +57,7 @@ public interface InputOutput {
 	}
 
 	default Long readLong(String prompt, String errorPrompt, long min, long max) {
-		
+
 		long res = Long.parseLong(prompt);
 		if (res < min || res > max) {
 			throw new RuntimeException(errorPrompt);
@@ -96,6 +96,32 @@ public interface InputOutput {
 		if (res.isBefore(min) || res.isAfter(max)) {
 			throw new RuntimeException(errorPrompt);
 		}
+		return res;
+	}
+
+	@SuppressWarnings("unchecked")
+	default <T extends Comparable<T>> T readDataMinMax(String prompt, String errorPrompt, T min, T max) {
+		T res;
+		try {
+			if (min instanceof LocalDate) {
+				res = (T) LocalDate.parse(prompt);
+			} else if (min instanceof Integer) {
+				res = (T) Integer.valueOf(prompt);
+			} else if (min instanceof Double) {
+				res = (T) Double.valueOf(prompt);
+			} else if (min instanceof Long) {
+				res = (T) Long.valueOf(prompt);
+			} else {
+				throw new RuntimeException("Unsupported data type");
+			}
+
+			if (res.compareTo(min) < 0 || res.compareTo(max) > 0) {
+				throw new RuntimeException(errorPrompt);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(errorPrompt, e);
+		}
+
 		return res;
 	}
 

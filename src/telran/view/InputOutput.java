@@ -2,7 +2,6 @@ package telran.view;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -45,7 +44,7 @@ public interface InputOutput {
 	}
 
 	default Integer readInt(String prompt, String errorPrompt, int min, int max) {
-		int res = readObject(prompt, errorPrompt, Integer::parseInt);
+		int res = Integer.parseInt(prompt);
 		if (res < min || res > max) {
 			throw new RuntimeException(errorPrompt);
 		}
@@ -58,7 +57,7 @@ public interface InputOutput {
 	}
 
 	default Long readLong(String prompt, String errorPrompt, long min, long max) {
-		long res = readObject(prompt, errorPrompt, Long::parseLong);
+		long res = Long.parseLong(prompt);
 		if (res < min || res > max) {
 			throw new RuntimeException(errorPrompt);
 		}
@@ -92,7 +91,7 @@ public interface InputOutput {
 	}
 
 	default LocalDate readIsoDate(String prompt, String errorPrompt, LocalDate min, LocalDate max) {
-		LocalDate res = readObject(prompt, errorPrompt, LocalDate::parse);
+		LocalDate res = LocalDate.parse(prompt);
 		if (res.isBefore(min) || res.isAfter(max)) {
 			throw new RuntimeException(errorPrompt);
 		}

@@ -18,7 +18,7 @@ import telran.view.*;
 
 class InputOutputTest {
 	InputOutput io = new SystemInputOutput();
-	String myInput = "Peter#2000-01-01#devops#50000\n" + "123#Peter#2000-15-01#devops#50000\n"
+	String myInput = "Peter#2000-01-01#devops#50000\n" + "123#Peter#2000-11-01#devops#50000\n"
 			+ "123#Peter#2000-01-01#devops#50000\n";
 
 	@BeforeEach
@@ -61,7 +61,7 @@ class InputOutputTest {
 		io.writeObjectLine(empl);
 	}
 
-//	@Test
+	@Test
 	void testReadEmployeeBySeparateField() throws Exception {
 		// TODO
 		// id in range [100000-999999]
@@ -76,6 +76,7 @@ class InputOutputTest {
 					if (tokens.length != 5) {
 						throw new RuntimeException("must be 5 tokens");
 					};
+				
 					long id = io.readLong(tokens[0], "It is not a Long number", 100000, 999999);
 					Predicate<String> pattern = input -> input.matches("[A-Z][a-zA-Z]+");
 					String name = io.readString(tokens[1],

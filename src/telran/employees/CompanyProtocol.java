@@ -35,15 +35,21 @@ public class CompanyProtocol implements ApplProtocol {
 			case "employee/department/update" -> employee_department_update(requestData);
 			case "employees/getEmployeesByAge" -> getEmployeesByAge(requestData);
 			case "employees/getEmployeesBySalary" -> getEmployeesBySalary(requestData);
+			case "employees/getSalaryDistribution" -> getSalaryDistribution(requestData);
 			default -> 0;
 			};
-			response = responseData == (Integer)0 ? new Response(ResponseCode.WRONG_TYPE, requestType)
+			response = responseData == (Integer) 0 ? new Response(ResponseCode.WRONG_TYPE, requestType)
 					: new Response(ResponseCode.OK, responseData);
 		} catch (Exception e) {
 			response = new Response(ResponseCode.WRONG_DATA, e.getMessage());
 		}
 
 		return response;
+	}
+
+	private Serializable getSalaryDistribution(Serializable requestData) {
+		int interval = (int) requestData;
+		return (Serializable) company.getSalaryDistribution(interval);
 	}
 
 	private Serializable getEmployeesBySalary(Serializable requestData) {
@@ -57,7 +63,7 @@ public class CompanyProtocol implements ApplProtocol {
 	}
 
 	private Serializable employee_department_update(Serializable requestData) {
-		UpdateDepartmentData data = (UpdateDepartmentData) requestData;		
+		UpdateDepartmentData data = (UpdateDepartmentData) requestData;
 		return company.updateDepartment(data.id(), data.department());
 	}
 
@@ -67,7 +73,7 @@ public class CompanyProtocol implements ApplProtocol {
 	}
 
 	private Serializable getDepartmentSalaryDistribution() {
-		
+
 		return (Serializable) company.getDepartmentSalaryDistribution();
 	}
 
@@ -84,7 +90,7 @@ public class CompanyProtocol implements ApplProtocol {
 	}
 
 	private Serializable employees_all(Serializable requestData) {
-		
+
 		return new ArrayList<>(company.getEmployees());
 	}
 

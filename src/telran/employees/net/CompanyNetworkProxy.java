@@ -51,8 +51,8 @@ public class CompanyNetworkProxy implements Company {
 
 	@Override
 	public List<SalaryDistribution> getSalaryDistribution(int interval) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return networkHandler.send("employees/getSalaryDistribution", interval);
 	}
 
 	@Override

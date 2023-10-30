@@ -18,7 +18,7 @@ public class CompanyImpl implements Company {
 	public boolean addEmployee(Employee empl) {
 		boolean res = employees.putIfAbsent(empl.id(), empl) == null;
 		if (res) {
-			LocalDate date = empl.birthdate(); 
+			LocalDate date = empl.birthDate(); 
 			Integer salary = empl.salary();
 			String department = empl.department();
 			addToIndex(empl, date, employeesDate);
@@ -37,7 +37,7 @@ public class CompanyImpl implements Company {
 	public Employee removeEmployee(long id) {
 		Employee empl = employees.remove(id);
 		if(empl != null) {
-			LocalDate date = empl.birthdate(); 
+			LocalDate date = empl.birthDate(); 
 			Integer salary = empl.salary();
 			String department = empl.department();
 			removeFromIndex(empl, date, employeesDate);
@@ -123,7 +123,7 @@ public class CompanyImpl implements Company {
 		Employee empl = removeEmployee(id);
 		if(empl != null) {
 			Employee newEmployee = new Employee(id, empl.name(),
-					empl.department(), newSalary, empl.birthdate());
+					empl.department(), newSalary, empl.birthDate());
 			addEmployee(newEmployee);
 		}
 		return empl;
@@ -134,7 +134,7 @@ public class CompanyImpl implements Company {
 		Employee empl = removeEmployee(id);
 		if(empl != null) {
 			Employee newEmployee = new Employee(id, empl.name(),
-					department, empl.salary(), empl.birthdate());
+					department, empl.salary(), empl.birthDate());
 			addEmployee(newEmployee);
 		}
 		return empl;

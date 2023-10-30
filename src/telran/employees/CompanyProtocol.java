@@ -31,6 +31,9 @@ public class CompanyProtocol implements ApplProtocol {
 			case "employee/salary/update" -> employee_salary_update(requestData);
 			case "employee/remove" -> employee_remove(requestData);
 			case "employees/getDepartmentSalaryDistribution" -> getDepartmentSalaryDistribution();
+			case "employees/getEmployeesByDepartment" -> getEmployeesByDepartment(requestData);
+			case "employee/department/update" -> employee_department_update(requestData);
+			case "employees/getEmployeesByAge" -> getEmployeesByAge(requestData);
 			default -> 0;
 			};
 			response = responseData == (Integer)0 ? new Response(ResponseCode.WRONG_TYPE, requestType)
@@ -40,6 +43,21 @@ public class CompanyProtocol implements ApplProtocol {
 		}
 
 		return response;
+	}
+
+	private Serializable getEmployeesByAge(Serializable requestData) {
+		EmployeesAgeInterval data = (EmployeesAgeInterval) requestData;
+		return (Serializable) company.getEmployeesByAge(data.ageFrom(), data.ageTo());
+	}
+
+	private Serializable employee_department_update(Serializable requestData) {
+		UpdateDepartmentData data = (UpdateDepartmentData) requestData;		
+		return company.updateDepartment(data.id(), data.department());
+	}
+
+	private Serializable getEmployeesByDepartment(Serializable requestData) {
+		String department = (String) requestData;
+		return (Serializable) company.getEmployeesByDepartment(department);
 	}
 
 	private Serializable getDepartmentSalaryDistribution() {

@@ -34,6 +34,7 @@ public class CompanyProtocol implements ApplProtocol {
 			case "employees/getEmployeesByDepartment" -> getEmployeesByDepartment(requestData);
 			case "employee/department/update" -> employee_department_update(requestData);
 			case "employees/getEmployeesByAge" -> getEmployeesByAge(requestData);
+			case "employees/getEmployeesBySalary" -> getEmployeesBySalary(requestData);
 			default -> 0;
 			};
 			response = responseData == (Integer)0 ? new Response(ResponseCode.WRONG_TYPE, requestType)
@@ -43,6 +44,11 @@ public class CompanyProtocol implements ApplProtocol {
 		}
 
 		return response;
+	}
+
+	private Serializable getEmployeesBySalary(Serializable requestData) {
+		EmployeesSalaryInt data = (EmployeesSalaryInt) requestData;
+		return (Serializable) company.getEmployeesBySalary(data.salaryFrom(), data.salaryTo());
 	}
 
 	private Serializable getEmployeesByAge(Serializable requestData) {

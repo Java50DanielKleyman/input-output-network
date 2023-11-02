@@ -14,7 +14,7 @@ public class Race {
 		Random random = new Random();
 
 		int randomMilliseconds = random.nextInt(4) + 2;
-		return randomMilliseconds * 1000;
+		return randomMilliseconds;
 	}
 
 	public void detectWinner(int racer) {

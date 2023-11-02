@@ -17,7 +17,7 @@ public class Racer extends Thread {
 
 	@Override
 	public void run() {
-		for (int i = 0; i <= distance; i++) {
+		for (int i = 0; i < distance; i++) {
 			try {
 				sleep(sleepingTime);
 			} catch (InterruptedException e) {

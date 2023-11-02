@@ -1,7 +1,8 @@
 package telran.threadsRace;
 
-import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
+
 
 public class RaceControllerAppl {
 
@@ -20,19 +21,32 @@ public class RaceControllerAppl {
 		} finally {
 			scanner.close();
 		}
-		System.out.printf("Congratulations to thread #%d (winner)", getWinnerNumber(racers, race, distance));
+		int winner = getWinnerNumber(racers, race, distance);
+		System.out.printf("Congratulations to thread #%d (winner)", winner);
 	}
 
 	private static int getWinnerNumber(int racers, Race race, int distance) {
 
-		Arrays.stream(getRacers(racers, race, distance)).forEach(racer -> {
-			try {
-				racer.start();
-				racer.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		});
+		  Thread[] racersArray = getRacers(racers, race, distance);
+		    CountDownLatch latch = new CountDownLatch(racers);
+
+		    for (Thread racer : racersArray) {
+		        racer.start();
+		        new Thread(() -> {
+		            try {
+		                racer.join();
+		                latch.countDown();
+		            } catch (InterruptedException e) {
+		                e.printStackTrace();
+		            }
+		        }).start();
+		    }
+
+		    try {
+		        latch.await();
+		    } catch (InterruptedException e) {
+		        e.printStackTrace();
+		    }
 
 		return race.getWinner();
 	}

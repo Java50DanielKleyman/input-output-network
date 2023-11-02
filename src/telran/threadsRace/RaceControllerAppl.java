@@ -1,4 +1,4 @@
-package threadsRace;
+package telran.threadsRace;
 
 public class RaceControllerAppl {
 

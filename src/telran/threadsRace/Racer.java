@@ -1,4 +1,4 @@
-package threadsRace;
+package telran.threadsRace;
 
 public class Racer extends Thread {
 	private Race race;

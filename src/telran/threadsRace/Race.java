@@ -20,10 +20,11 @@ public class Race {
 	public void detectWinner(int racer) {
 		if (!isWinner) {
 			winner = racer;
+			isWinner = true;
 		}
 	}
 
-	public String getWinner() {
+	public int getWinner() {
 		return winner;
 	}
 }

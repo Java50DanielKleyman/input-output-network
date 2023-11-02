@@ -23,7 +23,7 @@ public class RaceControllerAppl {
 		System.out.printf("Congratulations to thread #%d (winner)", getWinnerNumber(racers, race, distance));
 	}
 
-	private static Object getWinnerNumber(int racers, Race race, int distance) {
+	private static int getWinnerNumber(int racers, Race race, int distance) {
 
 		Arrays.stream(getRacers(racers, race, distance)).forEach(racer -> {
 			try {
@@ -34,7 +34,7 @@ public class RaceControllerAppl {
 			}
 		});
 
-		return null;
+		return race.getWinner();
 	}
 
 	private static Thread[] getRacers(int racers, Race race, int distance) {

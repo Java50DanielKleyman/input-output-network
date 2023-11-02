@@ -1,7 +1,6 @@
 package telran.threadsRace;
-
 import java.util.Scanner;
-import java.util.concurrent.CountDownLatch;
+
 
 public class RaceControllerAppl {
 

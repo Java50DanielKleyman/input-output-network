@@ -23,5 +23,6 @@ public class Racer extends Thread {
 			}
 			System.out.println(name);
 		}
+		
 	}
 }

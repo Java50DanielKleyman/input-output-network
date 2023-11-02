@@ -9,6 +9,7 @@ public class RaceControllerAppl {
 		Scanner scanner = new Scanner(System.in);
 		int racers = 0;
 		int distance = 0;
+		Race race = new Race();
 		try {
 			System.out.println("Enter the number of racers: ");
 			racers = scanner.nextInt();
@@ -19,13 +20,12 @@ public class RaceControllerAppl {
 		} finally {
 			scanner.close();
 		}
-		System.out.printf("Congratulations to thread #%d (winner)", getWinnerNumber(racers));
+		System.out.printf("Congratulations to thread #%d (winner)", getWinnerNumber(racers, race, distance));
 	}
 
-	private static Object getWinnerNumber(int racers) {
-		Race race = new Race();
-		
-		Arrays.stream(getRacers(racers)).forEach(racer -> {
+	private static Object getWinnerNumber(int racers, Race race, int distance) {
+
+		Arrays.stream(getRacers(racers, race, distance)).forEach(racer -> {
 			try {
 				racer.start();
 				racer.join();
@@ -37,9 +37,13 @@ public class RaceControllerAppl {
 		return null;
 	}
 
-	private static Thread[] getRacers(int racers) {
-
-		return;
+	private static Thread[] getRacers(int racers, Race race, int distance) {
+		Thread[] racersArray = new Thread[racers];
+		int sleepingTime = race.getSleepingTime();
+		for(int i = 0; i < racersArray.length; i++) {
+			racersArray[i] = new Racer(race, distance, sleepingTime);
+		}
+		return racersArray;
 	}
 
 }

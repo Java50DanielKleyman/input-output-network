@@ -3,7 +3,7 @@ package telran.threadsRace;
 import java.util.Random;
 
 public class Race {
-	private String winner;
+	private int winner;
 	private boolean isWinner;
 
 	public Race() {
@@ -17,7 +17,7 @@ public class Race {
 		return randomMilliseconds * 1000;
 	}
 
-	public void detectWinner(String racer) {
+	public void detectWinner(int racer) {
 		if (!isWinner) {
 			winner = racer;
 		}

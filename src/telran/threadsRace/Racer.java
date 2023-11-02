@@ -5,14 +5,13 @@ public class Racer extends Thread {
 	private int distance;
 	private int sleepingTime;
 	private int number;
-	private static int racerCounter = 0;
-	private String name;
+	private static int racerCounter = 0;	
 
-	public Racer(Race race, int distance, int sleepingTime, String name) {
+	public Racer(Race race, int distance, int sleepingTime) {
 		this.race = race;
 		this.distance = distance;
 		this.sleepingTime = sleepingTime;
-		this.name = name;
+	
 		this.number = ++racerCounter;
 	}
 
@@ -26,7 +25,7 @@ public class Racer extends Thread {
 			}
 			System.out.println(number);
 		}
-race.detectWinner(getName());
+		race.detectWinner(number);
 	}
 
 	public int getNumber() {

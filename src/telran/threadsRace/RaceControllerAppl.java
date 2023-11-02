@@ -28,25 +28,35 @@ public class RaceControllerAppl {
 	private static int getWinnerNumber(int racers, Race race, int distance) {
 
 		  Thread[] racersArray = getRacers(racers, race, distance);
-		    CountDownLatch latch = new CountDownLatch(racers);
-
-		    for (Thread racer : racersArray) {
+		  for (Thread racer : racersArray) {
 		        racer.start();
-		        new Thread(() -> {
-		            try {
-		                racer.join();
-		                latch.countDown();
-		            } catch (InterruptedException e) {
-		                e.printStackTrace();
-		            }
-		        }).start();
-		    }
-
-		    try {
-		        latch.await();
-		    } catch (InterruptedException e) {
-		        e.printStackTrace();
-		    }
+		       }
+		  for (Thread racer : racersArray) {
+		        try {
+					racer.join();
+				} catch (InterruptedException e) {					
+					e.printStackTrace();
+				}
+		       }
+//		    CountDownLatch latch = new CountDownLatch(racers);
+//
+//		    for (Thread racer : racersArray) {
+//		        racer.start();
+//		        new Thread(() -> {
+//		            try {
+//		                racer.join();
+//		                latch.countDown();
+//		            } catch (InterruptedException e) {
+//		                e.printStackTrace();
+//		            }
+//		        }).start();
+//		    }
+//
+//		    try {
+//		        latch.await();
+//		    } catch (InterruptedException e) {
+//		        e.printStackTrace();
+//		    }
 
 		return race.getWinner();
 	}

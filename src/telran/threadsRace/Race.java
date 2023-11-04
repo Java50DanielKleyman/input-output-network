@@ -3,28 +3,31 @@ package telran.threadsRace;
 import java.util.Random;
 
 public class Race {
-	private int winner;
-	private boolean isWinner;
-
-	public Race() {
-		this.isWinner = false;
-	};
-
-	public int getSleepingTime() {
-		Random random = new Random();
-
-		int randomMilliseconds = random.nextInt(4) + 2;
-		return randomMilliseconds;
+	private int distance;
+	private int minSleep;
+	private int maxSleep;
+	private int winner = -1;
+	public Race(int distance, int minSleep, int maxSleep) {
+		this.distance = distance;
+		this.minSleep = minSleep;
+		this.maxSleep = maxSleep;
 	}
-
-	public void detectWinner(int racer) {
-		if (!isWinner) {
-			winner = racer;
-			isWinner = true;
-		}
-	}
-
 	public int getWinner() {
 		return winner;
 	}
+	public void setWinner(int winner) {
+		if (this.winner == -1) {
+			this.winner = winner;
+		}
+	}
+	public int getDistance() {
+		return distance;
+	}
+	public int getMinSleep() {
+		return minSleep;
+	}
+	public int getMaxSleep() {
+		return maxSleep;
+	}
+	
 }

@@ -29,9 +29,9 @@ public class Printer extends Thread {
 			} catch (InterruptedException e) {
 					for(int i = 0; i < N_PORTIONS; i++) {
 						System.out.println(printerId);	
-					}
-															
+					}															
 					N_NUMBERS -= N_PORTIONS;
+					System.out.println("numbers left: " + N_NUMBERS);
 					nextPrinter.interrupt();
 				}
 			}

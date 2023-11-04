@@ -6,13 +6,14 @@ public class Printer extends Thread {
 	boolean running = true;
 	private int printerId;
 	private long countDown;
+	int numberOfPrinters;
 	Printer nextPrinter;
 
-	public Printer(long N_NUMBERS, long N_PORTIONS, int printerId) {
+	public Printer(long N_NUMBERS, long N_PORTIONS, int printerId, int numberOfPrinters) {
 		this.N_NUMBERS = N_NUMBERS;
 		this.N_PORTIONS = N_PORTIONS;
 		this.printerId = printerId;
-
+		this.numberOfPrinters = numberOfPrinters;
 		countDown = this.N_NUMBERS / this.N_PORTIONS;
 	}
 
@@ -33,6 +34,9 @@ public class Printer extends Thread {
 				while (running || countDown != 0) {
 					for (int i = 0; i < N_PORTIONS; i++) {
 						System.out.println(printerId);
+					}
+					if (countDown > N_PORTIONS - numberOfPrinters) {
+						nextPrinter.start();
 					}
 					countDown--;
 					nextPrinter.interrupt();

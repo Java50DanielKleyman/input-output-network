@@ -3,13 +3,14 @@ package telran.numbersPrinting;
 public class ScheduledNumbersPrinitingAppl {
 	private static long N_NUMBERS = 100;
 	private static long N_PORTIONS = 10;
-	private static int numberOfThreads = 4;
+	private static int numberOfPrinters = 4;
 
 	public static void main(String[] args) {
 		Printer[] printers = createPrinters();
 		setNextPrinters(printers);
-		printers[0].interrupt();
-		printers[0].finish();
+		printers[0].start();
+	//	printers[0].interrupt();
+	//	printers[0].finish();
 
 	}
 

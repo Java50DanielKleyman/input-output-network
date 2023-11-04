@@ -35,7 +35,7 @@ public class Printer extends Thread {
 					for (int i = 0; i < N_PORTIONS; i++) {
 						System.out.println(printerId);
 					}
-					if (countDown > N_PORTIONS - numberOfPrinters) {
+					if (countDown == N_PORTIONS && printerId!= numberOfPrinters) {
 						nextPrinter.start();
 					}
 					countDown--;

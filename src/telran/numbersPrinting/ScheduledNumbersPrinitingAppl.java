@@ -27,9 +27,9 @@ public class ScheduledNumbersPrinitingAppl {
 	}
 
 	private static Printer[] createPrinters() {
-		Printer[] printers = new Printer[numberOfThreads];
-		for (int i = 0; i < numberOfThreads; i++) {
-			printers[i] = new Printer(N_NUMBERS, N_PORTIONS, i);
+		Printer[] printers = new Printer[numberOfPrinters];
+		for (int i = 0; i < numberOfPrinters; i++) {
+			printers[i] = new Printer(N_NUMBERS, N_PORTIONS, i+1, numberOfPrinters);
 		}
 		return printers;
 	}

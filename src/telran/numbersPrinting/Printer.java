@@ -31,7 +31,7 @@ public class Printer extends Thread {
 						System.out.println(printerId);	
 					}															
 					N_NUMBERS -= N_PORTIONS;
-					System.out.println("numbers left: " + N_NUMBERS);
+					System.out.println("Printer " + printerId + ". Numbers left: " + N_NUMBERS);
 					nextPrinter.interrupt();
 				}
 			}

@@ -14,7 +14,7 @@ public class ScheduledNumbersPrinitingAppl {
             printer.start();
         }
 		printers[0].interrupt();
-		printers[0].finish();
+	//	printers[0].finish();
 
 	}	
 

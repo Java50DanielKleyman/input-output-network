@@ -23,18 +23,18 @@ public class Printer extends Thread {
 
 	@Override
 	public void run() {
-		while (running) {
+		while (running || N_NUMBERS != 0) {
 			try {
 				sleep(2000);
 			} catch (InterruptedException e) {
-				while (running || N_NUMBERS != 0) {
-					for (int i = 0; i < N_PORTIONS; i++) {
-						System.out.println(printerId);
-					}					
+					for(int i = 0; i < N_PORTIONS; i++) {
+						System.out.println(printerId);	
+					}
+															
 					N_NUMBERS -= N_PORTIONS;
 					nextPrinter.interrupt();
 				}
 			}
 		}
 	}
-}
+

@@ -28,10 +28,10 @@ public class Printer extends Thread {
 				sleep(2000);
 			} catch (InterruptedException e) {
 					for(int i = 0; i < N_PORTIONS; i++) {
-						System.out.println(printerId);	
+						System.out.print(printerId);	
 					}															
 					N_NUMBERS -= N_PORTIONS;
-					System.out.println("Printer " + printerId + ". Numbers left: " + N_NUMBERS);
+					System.out.println(" Printer " + printerId + ". Numbers left: " + N_NUMBERS);
 					nextPrinter.interrupt();
 				}
 			}

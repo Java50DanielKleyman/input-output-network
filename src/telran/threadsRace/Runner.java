@@ -27,8 +27,7 @@ public class Runner extends Thread {
 			}
 			System.out.printf("%d - step %d\n", runnerId, i);
 		}
-		Map.Entry<Integer, Integer> winnerEntry = new AbstractMap.SimpleEntry<>(runnerId,
-				(int) (System.currentTimeMillis() - startTime));
+		Map.Entry<Integer, Integer> winnerEntry = Map.entry(runnerId, (int) (System.currentTimeMillis() - startTime));
 		race.setWinnersList(winnerEntry);
 	}
 }

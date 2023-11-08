@@ -1,23 +1,26 @@
 package telran.threadsRace;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class Race {
 	private int distance;
 	private int minSleep;
 	private int maxSleep;
-	private int winner = -1;
+	private List<Map.Entry<Integer, Integer>> winnersList = new ArrayList<>();
 	public Race(int distance, int minSleep, int maxSleep) {
 		this.distance = distance;
 		this.minSleep = minSleep;
 		this.maxSleep = maxSleep;
 	}
-	public int getWinner() {
-		return winner;
+	public List<Map.Entry<Integer, Integer>> getWinnersList() {
+		 Collections.sort(winnersList, (entry1, entry2) -> entry1.getValue().compareTo(entry2.getValue()));
+		return winnersList;
 	}
-	public void setWinner(int winner) {
-		if (this.winner == -1) {
-			this.winner = winner;
-		}
+	public void setWinnersList(Map.Entry<Integer, Integer> entry) {
+		winnersList.add(entry);
 	}
 	public int getDistance() {
 		return distance;

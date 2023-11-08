@@ -44,10 +44,10 @@ public class RaceAppl {
 
 	private static void displayWinner(Race race) {
 		List<Map.Entry<Integer, Integer>> winnersList = race.getWinnersList();
-		System.out.println("Place   racer number    time");
+		System.out.println("Place  racer number    time");
 		for (int i = 0; i < winnersList.size(); i++) {
 			Map.Entry<Integer, Integer> winner = winnersList.get(i);
-			System.out.printf("%d    %d    %d", i + 1, winner.getKey(), winner.getValue());
+			  System.out.printf("%d          %d            %d%n", i + 1, winner.getKey(), winner.getValue());
 		}
 
 	}

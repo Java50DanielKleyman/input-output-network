@@ -16,7 +16,6 @@ public class Race {
 		this.maxSleep = maxSleep;
 	}
 	public List<Map.Entry<Integer, Integer>> getWinnersList() {
-		 Collections.sort(winnersList, (entry1, entry2) -> entry1.getValue().compareTo(entry2.getValue()));
 		return winnersList;
 	}
 	public synchronized void setWinnersList(Map.Entry<Integer, Integer> entry) {

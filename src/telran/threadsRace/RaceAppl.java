@@ -8,7 +8,6 @@ import telran.view.Item;
 import telran.view.Menu;
 import telran.view.SystemInputOutput;
 
-
 public class RaceAppl {
 
 	private static final int MAX_THREADS = 10;
@@ -17,6 +16,7 @@ public class RaceAppl {
 	private static final int MAX_DISTANCE = 3500;
 	private static final int MIN_SLEEP = 2;
 	private static final int MAX_SLEEP = 5;
+
 	public static void main(String[] args) {
 		InputOutput io = new SystemInputOutput();
 		Item[] items = getItems();
@@ -26,16 +26,14 @@ public class RaceAppl {
 	}
 
 	private static Item[] getItems() {
-		Item[] res = {
-				Item.of("Start new game", RaceAppl::startGame),
-				Item.exit()
-		};
+		Item[] res = { Item.of("Start new game", RaceAppl::startGame), Item.exit() };
 		return res;
 	}
+
 	static void startGame(InputOutput io) {
-		int nThreads = io.readInt("Enter number of the runners","Wrong number of the runners",
-				MIN_THREADS, MAX_THREADS);
-		int distance = io.readInt("Enter distance", "Wrong Distance",MIN_DISTANCE, MAX_DISTANCE);
+		int nThreads = io.readInt("Enter number of the runners", "Wrong number of the runners", MIN_THREADS,
+				MAX_THREADS);
+		int distance = io.readInt("Enter distance", "Wrong Distance", MIN_DISTANCE, MAX_DISTANCE);
 		Race race = new Race(distance, MIN_SLEEP, MAX_SLEEP);
 		Runner[] runners = new Runner[nThreads];
 		long startTime = System.currentTimeMillis();
@@ -46,29 +44,31 @@ public class RaceAppl {
 
 	private static void displayWinner(Race race) {
 		List<Map.Entry<Integer, Integer>> winnersList = race.getWinnersList();
-		
-		
+		System.out.println("Place   racer number    time");
+		for (int i = 0; i < winnersList.size(); i++) {
+			Map.Entry<Integer, Integer> winner = winnersList.get(i);
+			System.out.printf("%d    %d    %d", i + 1, winner.getKey(), winner.getValue());
+		}
+
 	}
 
-	private static void joinRunners(Runner[] runners)  {
-		for(int i = 0; i < runners.length; i++) {
+	private static void joinRunners(Runner[] runners) {
+		for (int i = 0; i < runners.length; i++) {
 			try {
 				runners[i].join();
 			} catch (InterruptedException e) {
-				
+
 			}
 		}
-		
-		
+
 	}
 
 	private static void startRunners(Runner[] runners, Race race, long startTime) {
-		for(int i = 0; i < runners.length; i++) {
+		for (int i = 0; i < runners.length; i++) {
 			runners[i] = new Runner(race, i + 1, startTime);
 			runners[i].start();
 		}
-		
-		
+
 	}
 
 }

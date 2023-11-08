@@ -19,7 +19,7 @@ public class Race {
 		 Collections.sort(winnersList, (entry1, entry2) -> entry1.getValue().compareTo(entry2.getValue()));
 		return winnersList;
 	}
-	public void setWinnersList(Map.Entry<Integer, Integer> entry) {
+	public synchronized void setWinnersList(Map.Entry<Integer, Integer> entry) {
 		winnersList.add(entry);
 	}
 	public int getDistance() {

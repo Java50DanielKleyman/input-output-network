@@ -1,5 +1,8 @@
 package telran.threadsRace;
 
+import java.util.List;
+import java.util.Map;
+
 import telran.view.InputOutput;
 import telran.view.Item;
 import telran.view.Menu;
@@ -35,13 +38,15 @@ public class RaceAppl {
 		int distance = io.readInt("Enter distance", "Wrong Distance",MIN_DISTANCE, MAX_DISTANCE);
 		Race race = new Race(distance, MIN_SLEEP, MAX_SLEEP);
 		Runner[] runners = new Runner[nThreads];
-		startRunners(runners, race);
+		long startTime = System.currentTimeMillis();
+		startRunners(runners, race, startTime);
 		joinRunners(runners);
 		displayWinner(race);
 	}
 
 	private static void displayWinner(Race race) {
-		System.out.println("Congratulations to runner " + race.getWinner());
+		List<Map.Entry<Integer, Integer>> winnersList = race.getWinnersList();
+		
 		
 	}
 
@@ -57,9 +62,9 @@ public class RaceAppl {
 		
 	}
 
-	private static void startRunners(Runner[] runners, Race race) {
+	private static void startRunners(Runner[] runners, Race race, long startTime) {
 		for(int i = 0; i < runners.length; i++) {
-			runners[i] = new Runner(race, i + 1);
+			runners[i] = new Runner(race, i + 1, startTime);
 			runners[i].start();
 		}
 		

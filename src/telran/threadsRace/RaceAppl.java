@@ -1,5 +1,4 @@
 package telran.threadsRace;
-import java.util.Scanner;
 
 import telran.view.InputOutput;
 import telran.view.Item;

@@ -1,6 +1,5 @@
 package telran.threadsRace;
 
-import java.util.Random;
 
 public class Race {
 	private int distance;

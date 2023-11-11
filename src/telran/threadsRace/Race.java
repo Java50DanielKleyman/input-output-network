@@ -1,25 +1,22 @@
 package telran.threadsRace;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Race {
 	private int distance;
 	private int minSleep;
 	private int maxSleep;
-	private List<Map.Entry<Integer, Integer>> winnersList = new ArrayList<>();
+	AtomicInteger winner = new AtomicInteger(-1);
 	public Race(int distance, int minSleep, int maxSleep) {
 		this.distance = distance;
 		this.minSleep = minSleep;
 		this.maxSleep = maxSleep;
 	}
-	public List<Map.Entry<Integer, Integer>> getWinnersList() {
-		return winnersList;
+	public int getWinner() {
+		return winner.get();
 	}
-	public synchronized void setWinnersList(Map.Entry<Integer, Integer> entry) {
-		winnersList.add(entry);
+	public void setWinner(int winner) {
+		this.winner.compareAndSet(-1, winner);
 	}
 	public int getDistance() {
 		return distance;

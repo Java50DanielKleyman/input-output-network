@@ -15,12 +15,13 @@ public class CompanyImpl implements Company {
 	TreeMap<LocalDate, List<Employee>> employeesDate = new TreeMap<>();
 	TreeMap<Integer, List<Employee>> employeesSalary = new TreeMap<>();
 	HashMap<String, List<Employee>> employeesDepartment = new HashMap<>();
-	ReadWriteLock lock = new ReentrantReadWriteLock();
+	ReadWriteLock readLock = new ReentrantReadWriteLock();
+	ReadWriteLock writeLock = new ReentrantReadWriteLock();
 
 	@Override
 	public boolean addEmployee(Employee empl) {
 		boolean res;
-		lock.writeLock().lock();
+		writeLock.writeLock().lock();
 		try {
 			res = employees.putIfAbsent(empl.id(), empl) == null;
 			if (res) {
@@ -32,7 +33,7 @@ public class CompanyImpl implements Company {
 				addToIndex(empl, department, employeesDepartment);
 			}
 		} finally {
-			lock.writeLock().unlock();
+			writeLock.writeLock().unlock();
 		}
 		return res;
 	}
@@ -44,7 +45,7 @@ public class CompanyImpl implements Company {
 	@Override
 	public Employee removeEmployee(long id) {
 		Employee empl;
-		lock.writeLock().lock();
+		writeLock.writeLock().lock();
 		try {
 			empl = employees.remove(id);
 			if (empl != null) {
@@ -56,7 +57,7 @@ public class CompanyImpl implements Company {
 				removeFromIndex(empl, department, employeesDepartment);
 			}
 		} finally {
-			lock.writeLock().unlock();
+			writeLock.writeLock().unlock();
 		}
 		return empl;
 	}
@@ -72,39 +73,39 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public Employee getEmployee(long id) {
-		lock.readLock().lock();
+		readLock.readLock().lock();
 		try {
 			return employees.get(id);
 		} finally {
-			lock.readLock().unlock();
+			readLock.readLock().unlock();
 		}
 	}
 
 	@Override
 	public List<Employee> getEmployees() {
-		lock.readLock().lock();
+		readLock.readLock().lock();
 		try {
 			return new ArrayList<>(employees.values());
 		} finally {
-			lock.readLock().unlock();
+			readLock.readLock().unlock();
 		}
 	}
 
 	@Override
 	public List<DepartmentSalary> getDepartmentSalaryDistribution() {
-		lock.readLock().lock();
+		readLock.readLock().lock();
 		try {
 			return new LinkedList<>(employees.values().stream()
 					.collect(Collectors.groupingBy(Employee::department, Collectors.averagingInt(Employee::salary)))
 					.entrySet().stream().map(e -> new DepartmentSalary(e.getKey(), e.getValue())).toList());
 		} finally {
-			lock.readLock().unlock();
+			readLock.readLock().unlock();
 		}
 	}
 
 	@Override
 	public List<SalaryDistribution> getSalaryDistribution(int interval) {
-		lock.readLock().lock();
+		readLock.readLock().lock();
 		try {
 			Map<Integer, Long> mapIntervalNumbers = employees.values().stream()
 					.collect(Collectors.groupingBy(e -> e.salary() / interval, Collectors.counting()));
@@ -113,14 +114,14 @@ public class CompanyImpl implements Company {
 							e.getValue().intValue()))
 					.sorted((sd1, sd2) -> Integer.compare(sd1.min(), sd2.min())).toList();
 		} finally {
-			lock.readLock().unlock();
+			readLock.readLock().unlock();
 		}
 	}
 
 	@Override
 	public List<Employee> getEmployeesByDepartment(String department) {
 		ArrayList<Employee> res;
-		lock.readLock().lock();
+		readLock.readLock().lock();
 		try {
 			Collection<Employee> employeesCol = employeesDepartment.get(department);
 			res = new ArrayList<>();
@@ -128,30 +129,30 @@ public class CompanyImpl implements Company {
 				res.addAll(employeesCol);
 			}
 		} finally {
-			lock.readLock().unlock();
+			readLock.readLock().unlock();
 		}
 		return res;
 	}
 
 	@Override
 	public List<Employee> getEmployeesBySalary(int salaryFrom, int salaryTo) {
-		lock.readLock().lock();
+		readLock.readLock().lock();
 		try {
 			return employeesSalary.subMap(salaryFrom, salaryTo).values().stream().flatMap(col -> col.stream()).toList();
 		} finally {
-			lock.readLock().unlock();
+			readLock.readLock().unlock();
 		}
 	}
 
 	@Override
 	public List<Employee> getEmployeesByAge(int ageFrom, int ageTo) {
-		lock.readLock().lock();
+		readLock.readLock().lock();
 		try {
 			LocalDate dateFrom = getDate(ageTo);
 			LocalDate dateTo = getDate(ageFrom);
 			return employeesDate.subMap(dateFrom, dateTo).values().stream().flatMap(List::stream).toList();
 		} finally {
-			lock.readLock().unlock();
+			readLock.readLock().unlock();
 		}
 	}
 
@@ -164,7 +165,7 @@ public class CompanyImpl implements Company {
 	@Override
 	public Employee updateSalary(long id, int newSalary) {
 		Employee empl;
-		lock.writeLock().lock();
+		writeLock.writeLock().lock();
 		try {
 			empl = removeEmployee(id);
 			if (empl != null) {
@@ -172,7 +173,7 @@ public class CompanyImpl implements Company {
 				addEmployee(newEmployee);
 			}
 		} finally {
-			lock.writeLock().unlock();
+			writeLock.writeLock().unlock();
 		}
 		return empl;
 	}
@@ -180,7 +181,7 @@ public class CompanyImpl implements Company {
 	@Override
 	public Employee updateDepartment(long id, String department) {
 		Employee empl;
-		lock.writeLock().lock();
+		writeLock.writeLock().lock();
 		try {
 			empl = removeEmployee(id);
 			if (empl != null) {
@@ -188,7 +189,7 @@ public class CompanyImpl implements Company {
 				addEmployee(newEmployee);
 			}
 		} finally {
-			lock.writeLock().unlock();
+			writeLock.writeLock().unlock();
 		}
 		return empl;
 	}

@@ -1,7 +1,6 @@
 package telran.employees.service;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -12,11 +11,12 @@ import telran.employees.dto.Employee;
 import telran.employees.dto.SalaryDistribution;
 
 public class CompanyImpl implements Company {
-	HashMap<Long, Employee> employees = new HashMap<>(); //most effective structure for the interface methods
+	HashMap<Long, Employee> employees = new HashMap<>(); // most effective structure for the interface methods
 	TreeMap<LocalDate, List<Employee>> employeesDate = new TreeMap<>();
 	TreeMap<Integer, List<Employee>> employeesSalary = new TreeMap<>();
 	HashMap<String, List<Employee>> employeesDepartment = new HashMap<>();
 	ReadWriteLock lock = new ReentrantReadWriteLock();
+
 	@Override
 	public boolean addEmployee(Employee empl) {
 		boolean res;
@@ -30,7 +30,7 @@ public class CompanyImpl implements Company {
 				addToIndex(empl, date, employeesDate);
 				addToIndex(empl, salary, employeesSalary);
 				addToIndex(empl, department, employeesDepartment);
-			} 
+			}
 		} finally {
 			lock.writeLock().unlock();
 		}
@@ -54,7 +54,7 @@ public class CompanyImpl implements Company {
 				removeFromIndex(empl, date, employeesDate);
 				removeFromIndex(empl, salary, employeesSalary);
 				removeFromIndex(empl, department, employeesDepartment);
-			} 
+			}
 		} finally {
 			lock.writeLock().unlock();
 		}
@@ -92,72 +92,103 @@ public class CompanyImpl implements Company {
 
 	@Override
 	public List<DepartmentSalary> getDepartmentSalaryDistribution() {
-		return new LinkedList<>(employees.values().stream()
-				.collect(Collectors.groupingBy(Employee::department, Collectors.averagingInt(Employee::salary)))
-				.entrySet().stream().map(e -> new DepartmentSalary(e.getKey(), e.getValue())).toList());
+		lock.readLock().lock();
+		try {
+			return new LinkedList<>(employees.values().stream()
+					.collect(Collectors.groupingBy(Employee::department, Collectors.averagingInt(Employee::salary)))
+					.entrySet().stream().map(e -> new DepartmentSalary(e.getKey(), e.getValue())).toList());
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	@Override
 	public List<SalaryDistribution> getSalaryDistribution(int interval) {
-		Map<Integer, Long> mapIntervalNumbers = employees.values().stream()
-				.collect(Collectors.groupingBy(e -> e.salary() / interval, Collectors.counting()));
-		return mapIntervalNumbers.entrySet().stream()
-				.map(e -> new SalaryDistribution(e.getKey() * interval, e.getKey() * interval + interval, e.getValue().intValue()))
-				.sorted((sd1, sd2) -> Integer.compare(sd1.min(), sd2.min())).toList();
+		lock.readLock().lock();
+		try {
+			Map<Integer, Long> mapIntervalNumbers = employees.values().stream()
+					.collect(Collectors.groupingBy(e -> e.salary() / interval, Collectors.counting()));
+			return mapIntervalNumbers.entrySet().stream()
+					.map(e -> new SalaryDistribution(e.getKey() * interval, e.getKey() * interval + interval,
+							e.getValue().intValue()))
+					.sorted((sd1, sd2) -> Integer.compare(sd1.min(), sd2.min())).toList();
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	@Override
 	public List<Employee> getEmployeesByDepartment(String department) {
-		Collection<Employee> employeesCol = employeesDepartment.get(department);
-		ArrayList<Employee> res = new ArrayList<>();
-		if (employeesCol != null) {
-			res.addAll(employeesCol);
+		ArrayList<Employee> res;
+		lock.readLock().lock();
+		try {
+			Collection<Employee> employeesCol = employeesDepartment.get(department);
+			res = new ArrayList<>();
+			if (employeesCol != null) {
+				res.addAll(employeesCol);
+			}
+		} finally {
+			lock.readLock().unlock();
 		}
 		return res;
 	}
 
 	@Override
 	public List<Employee> getEmployeesBySalary(int salaryFrom, int salaryTo) {
-		return employeesSalary.subMap(salaryFrom,  salaryTo).values().stream()
-				.flatMap(col -> col.stream())
-				.toList();
+		lock.readLock().lock();
+		try {
+			return employeesSalary.subMap(salaryFrom, salaryTo).values().stream().flatMap(col -> col.stream()).toList();
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	@Override
 	public List<Employee> getEmployeesByAge(int ageFrom, int ageTo) {
-		
-		LocalDate dateFrom = getDate(ageTo);
-		LocalDate dateTo = getDate(ageFrom);
-		return employeesDate.subMap(dateFrom, dateTo).values().stream().flatMap(List::stream).toList();
+		lock.readLock().lock();
+		try {
+			LocalDate dateFrom = getDate(ageTo);
+			LocalDate dateTo = getDate(ageFrom);
+			return employeesDate.subMap(dateFrom, dateTo).values().stream().flatMap(List::stream).toList();
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	private LocalDate getDate(int age) {
 		LocalDate currentDate = LocalDate.now();
-		
+
 		return currentDate.minusYears(age);
 	}
 
-	
-	
-
 	@Override
 	public Employee updateSalary(long id, int newSalary) {
-		Employee empl = removeEmployee(id);
-		if(empl != null) {
-			Employee newEmployee = new Employee(id, empl.name(),
-					empl.department(), newSalary, empl.birthDate());
-			addEmployee(newEmployee);
+		Employee empl;
+		lock.writeLock().lock();
+		try {
+			empl = removeEmployee(id);
+			if (empl != null) {
+				Employee newEmployee = new Employee(id, empl.name(), empl.department(), newSalary, empl.birthDate());
+				addEmployee(newEmployee);
+			}
+		} finally {
+			lock.writeLock().unlock();
 		}
 		return empl;
 	}
 
 	@Override
 	public Employee updateDepartment(long id, String department) {
-		Employee empl = removeEmployee(id);
-		if(empl != null) {
-			Employee newEmployee = new Employee(id, empl.name(),
-					department, empl.salary(), empl.birthDate());
-			addEmployee(newEmployee);
+		Employee empl;
+		lock.writeLock().lock();
+		try {
+			empl = removeEmployee(id);
+			if (empl != null) {
+				Employee newEmployee = new Employee(id, empl.name(), department, empl.salary(), empl.birthDate());
+				addEmployee(newEmployee);
+			}
+		} finally {
+			lock.writeLock().unlock();
 		}
 		return empl;
 	}

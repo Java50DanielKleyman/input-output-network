@@ -1,5 +1,5 @@
 package telran.multithreading;
 
-public record ModelData() {
+public record ModelData(int updateProb, int nOperations) {
 
 }

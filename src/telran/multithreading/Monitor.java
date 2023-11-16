@@ -1,5 +1,8 @@
 package telran.multithreading;
 
-public record Monitor() {
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+
+public record Monitor(Lock lockRead, Lock lockWrite, AtomicInteger locksCounter) {
 
 }

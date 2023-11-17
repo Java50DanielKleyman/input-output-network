@@ -18,6 +18,8 @@ public class TcpServer implements Runnable {
 				Socket socket = serverSocket.accept();
 				ClientSessionHandler client = new ClientSessionHandler(socket, protocol);
 				client.run();
+			//	(new Thread(client)).start();
+				
 			}
 			
 		} catch(Exception e) {

@@ -5,8 +5,7 @@ import telran.multithreading.messaging.MessageBoxString;
 
 public class Sender extends Thread {
 	private MessageBox messageBox;
-	private int nMessages;
-	boolean currentFlagValue = MessageBoxString.flag;
+	private int nMessages;	
 
 	public Sender(MessageBox messageBox, int nMessages) {
 		this.messageBox = messageBox;

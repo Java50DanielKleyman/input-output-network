@@ -1,5 +1,8 @@
 package telran.multithreading;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import telran.multithreading.consumer.Receiver;
 import telran.multithreading.messaging.*;
 import telran.multithreading.producer.Sender;
@@ -13,12 +16,16 @@ public class SenderReceiverAppl {
 		MessageBox messageBox = new MessageBoxString();
 		Sender sender = new Sender(messageBox, N_MESSAGES);
 		sender.start();
-		for(int i = 0; i < N_RECEIVERS; i++) {
-			new Receiver(messageBox).start();
+		List<Receiver> receivers = new ArrayList<>();
+		for (int i = 0; i < N_RECEIVERS; i++) {
+			Receiver receiver = new Receiver(messageBox);
+			receivers.add(receiver);
+			receiver.start();
 		}
 		sender.join();
-		Thread.sleep(100); //to give all receivers-daemons process all messages FIXME HW #46 should be another logic of stopping receivers
-
+		for (Receiver receiver : receivers) {
+			receiver.join();
+		}
 	}
 
 }

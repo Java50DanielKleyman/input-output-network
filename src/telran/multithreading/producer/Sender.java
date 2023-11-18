@@ -5,7 +5,7 @@ import telran.multithreading.messaging.MessageBoxString;
 
 public class Sender extends Thread {
 	private MessageBox messageBox;
-	private int nMessages;	
+	private int nMessages;
 
 	public Sender(MessageBox messageBox, int nMessages) {
 		this.messageBox = messageBox;
@@ -15,10 +15,11 @@ public class Sender extends Thread {
 	@Override
 	public void run() {
 		for (int i = 1; i <= nMessages; i++) {
-			messageBox.put("message" + i);
-			if (i > nMessages) {
+			if (i == nMessages) {
 				MessageBoxString.flag = false;
 			}
+			messageBox.put("message" + i);
+
 		}
 	}
 }

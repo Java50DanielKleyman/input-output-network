@@ -5,7 +5,6 @@ import telran.multithreading.messaging.MessageBoxString;
 
 public class Receiver extends Thread {
 	private MessageBox messageBox;
-	boolean currentFlagValue = MessageBoxString.flag;
 
 	public Receiver(MessageBox messageBox) {
 		this.messageBox = messageBox;
@@ -20,7 +19,7 @@ public class Receiver extends Thread {
 			try {
 				message = messageBox.take();
 			} catch (InterruptedException e) {
-				// TODO
+				
 			}
 			System.out.printf("thread id: %d, message: %s\n", getId(), message);
 		}

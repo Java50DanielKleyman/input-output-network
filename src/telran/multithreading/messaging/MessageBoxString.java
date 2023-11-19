@@ -7,6 +7,7 @@ package telran.multithreading.messaging;
 public class MessageBoxString implements MessageBox{
 	private String message;
 	public static volatile boolean flag = true;
+	public static volatile boolean lastMessageReceived = false;
 	
 	@Override
 	synchronized public void put(String message) {

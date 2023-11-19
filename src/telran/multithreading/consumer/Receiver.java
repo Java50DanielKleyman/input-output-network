@@ -11,19 +11,23 @@ public class Receiver extends Thread {
 	}
 	@Override
 	public void run() {
-		String message = null;
-		while(MessageBoxString.flag) {
-			
-			try {
-				message = messageBox.take();
-			} catch (InterruptedException e) {
-				// TODO 
-			}
-			System.out.printf("thread id: %d, message: %s\n", getId(),message );
-		}
-		if(!MessageBoxString.flag) {
-			message = messageBox.pull();
-			System.out.printf("thread id: %d, Last message: %s\n", getId(),message );			
-		}
-	}
+        String message = null;
+        while (MessageBoxString.flag) {
+            try {
+                message = messageBox.take();
+            } catch (InterruptedException e) {
+                // Handle interruption if needed
+            }
+            System.out.printf("thread id: %d, message: %s\n", getId(), message);
+        }        
+        if (!MessageBoxString.lastMessageReceived && !MessageBoxString.flag) {            
+            synchronized (Receiver.class) {
+                if (!MessageBoxString.lastMessageReceived) {
+                    message = messageBox.pull();
+                    System.out.printf("thread id: %d, Last message: %s\n", getId(), message);
+                    MessageBoxString.lastMessageReceived = true;
+                }
+            }
+        }
+    }
 }

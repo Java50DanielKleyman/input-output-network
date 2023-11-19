@@ -15,8 +15,7 @@ public class Receiver extends Thread {
         while (MessageBoxString.flag) {
             try {
                 message = messageBox.take();
-            } catch (InterruptedException e) {
-                // Handle interruption if needed
+            } catch (InterruptedException e) {               
             }
             System.out.printf("thread id: %d, message: %s\n", getId(), message);
         }        

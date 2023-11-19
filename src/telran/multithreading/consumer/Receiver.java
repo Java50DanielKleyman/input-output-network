@@ -21,11 +21,11 @@ public class Receiver extends Thread {
         }        
         if (!MessageBoxString.lastMessageReceived && MessageBoxString.lastMessageSent) {            
             synchronized (Receiver.class) {
-                if (!MessageBoxString.lastMessageReceived) {
+                if (!MessageBoxString.lastMessageReceived) 
                     message = messageBox.pull();
                     System.out.printf("thread id: %d, Last message: %s\n", getId(), message);
                     MessageBoxString.lastMessageReceived = true;
-                }
+                
             }
         }
     }

@@ -14,11 +14,12 @@ public class Sender extends Thread {
 
 	@Override
 	public void run() {
-		for (int i = 1; i <= nMessages; i++) {
-			if (i == nMessages) {
+		for (int i = 1; i <= nMessages; i++) {		
+			if(i == nMessages) {
 				MessageBoxString.flag = false;
 			}
 			messageBox.put("message" + i);
+		
 
 		}
 	}

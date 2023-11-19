@@ -23,7 +23,10 @@ public class Receiver extends Thread {
 		}
 		if(!MessageBoxString.flag) {
 			message = messageBox.pull();
-			System.out.printf("thread id: %d, message: %s\n", getId(),message );
+			if(message != null) {
+				System.out.printf("thread id: %d, Last message: %s\n", getId(),message );
+			}
+			
 		}
 	}
 }

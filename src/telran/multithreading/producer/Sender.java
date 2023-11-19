@@ -16,7 +16,7 @@ public class Sender extends Thread {
 	public void run() {
 		for (int i = 1; i <= nMessages; i++) {		
 			if(i == nMessages) {
-				MessageBoxString.flag = false;
+				MessageBoxString.lastMessageSent = true;
 			}
 			messageBox.put("message" + i);
 		

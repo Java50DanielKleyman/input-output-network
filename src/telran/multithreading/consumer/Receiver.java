@@ -12,14 +12,14 @@ public class Receiver extends Thread {
 	@Override
 	public void run() {
         String message = null;
-        while (MessageBoxString.flag) {
+        while (!MessageBoxString.lastMessageSent) {
             try {
                 message = messageBox.take();
             } catch (InterruptedException e) {               
             }
             System.out.printf("thread id: %d, message: %s\n", getId(), message);
         }        
-        if (!MessageBoxString.lastMessageReceived && !MessageBoxString.flag) {            
+        if (!MessageBoxString.lastMessageReceived && MessageBoxString.lastMessageSent) {            
             synchronized (Receiver.class) {
                 if (!MessageBoxString.lastMessageReceived) {
                     message = messageBox.pull();

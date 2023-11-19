@@ -1,13 +1,11 @@
 package telran.multithreading.messaging;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * Message box contains only one string
  */
 public class MessageBoxString implements MessageBox{
 	private String message;
-	
+	public static volatile boolean flag = true;
 	@Override
 	synchronized public void put(String message) {
 		while(this.message  != null) {

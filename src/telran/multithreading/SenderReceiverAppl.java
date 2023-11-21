@@ -14,7 +14,7 @@ public class SenderReceiverAppl {
 
 	public static void main(String[] args) throws InterruptedException {
 		MessageBox messageBox = new MessageBoxString();
-		Sender sender = new Sender(messageBox, N_MESSAGES);
+		Sender sender = new Sender(messageBox, N_MESSAGES, N_RECEIVERS);
 		sender.start();
 		List<Receiver> receivers = new ArrayList<>();
 		for (int i = 0; i < N_RECEIVERS; i++) {
@@ -23,9 +23,9 @@ public class SenderReceiverAppl {
 			receiver.start();
 		}
 		sender.join();
-		for (Receiver receiver : receivers) {
-			receiver.interrupt();
-		}
+//		for (Receiver receiver : receivers) {
+//			receiver.interrupt();
+//		}
 	}
 
 }

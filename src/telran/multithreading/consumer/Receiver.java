@@ -15,10 +15,13 @@ public class Receiver extends Thread {
 		while (true) {
 			try {
 				message = messageBox.take();
+				if(message == "killThread") {
+					break;
+				}
 				System.out.printf("thread id: %d, message: %s\n", getId(), message);
 
 			} catch (InterruptedException e) {
-				break;
+//				break;
 //				message = messageBox.pull();
 //				if (message == null) {
 //					break;

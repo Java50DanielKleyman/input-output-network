@@ -1,13 +1,10 @@
 package telran.multithreading.messaging;
 
-
 /**
  * Message box contains only one string
  */
 public class MessageBoxString implements MessageBox{
 	private String message;
-	public static volatile boolean lastMessageSent = false;
-	public static volatile boolean lastMessageReceived = false;
 	
 	@Override
 	synchronized public void put(String message) {
@@ -19,7 +16,7 @@ public class MessageBoxString implements MessageBox{
 			}
 		}
 		this.message = message;		
-		this.notify();
+		this.notifyAll();
 		
 	}
 
@@ -40,7 +37,8 @@ public class MessageBoxString implements MessageBox{
 		String str = message;
 		message = null;
 		notifyAll();
-		return str;
+		return str;	 
+		
 	}
 
 }

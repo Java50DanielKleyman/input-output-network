@@ -24,7 +24,7 @@ public class SenderReceiverAppl {
 		}
 		sender.join();
 		for (Receiver receiver : receivers) {
-			receiver.join();
+			receiver.interrupt();
 		}
 	}
 

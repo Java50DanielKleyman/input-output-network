@@ -55,7 +55,7 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 			while (myLinkedBlockingQueue.size() == capacity) {
 				notFull.await();
 			}
-			myLinkedBlockingQueue.add(obj);
+			myLinkedBlockingQueue.offer(obj);
 			notFull.signal();
 
 		} finally {
@@ -74,7 +74,7 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 			try {
 				boolean acquiredLock = writerLock.tryLock();
 				if (acquiredLock) {
-					added = add(obj);
+					added = offer(obj);
 				}
 			} finally {
 				writerLock.unlock();
@@ -94,6 +94,7 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 	@Override
 	public E remove() {
 
+		
 		return myLinkedBlockingQueue.remove();
 	}
 

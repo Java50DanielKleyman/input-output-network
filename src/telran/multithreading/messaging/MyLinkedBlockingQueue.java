@@ -95,13 +95,23 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 	public E remove() {
 
 		
-		return myLinkedBlockingQueue.remove();
+		try {
+			writerLock.lock();
+			return myLinkedBlockingQueue.remove();
+		} finally {
+			writerLock.unlock();
+		}
 	}
 
 	@Override
 	public E poll() {
 
-		return myLinkedBlockingQueue.poll();
+		try {
+			writerLock.lock();
+			return myLinkedBlockingQueue.poll();
+		} finally {
+			writerLock.unlock();
+		}
 	}
 
 	@Override
@@ -119,13 +129,23 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 	@Override
 	public E element() {
 
-		return myLinkedBlockingQueue.element();
+		try {
+			readerLock.lock();
+			return myLinkedBlockingQueue.element();
+		} finally {
+			readerLock.unlock();
+		}
 	}
 
 	@Override
 	public E peek() {
 
-		return myLinkedBlockingQueue.peek();
+		try {
+			readerLock.lock();
+			return myLinkedBlockingQueue.peek();
+		} finally {
+			readerLock.unlock();
+		}
 	}
 
 }

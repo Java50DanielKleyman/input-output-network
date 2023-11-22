@@ -127,11 +127,24 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 		}
 	}
 
-//	@Override
-//	public E poll(long timeout, TimeUnit unit) throws InterruptedException {
-//
-//		;
-//	}
+	@Override
+	public E poll(long timeout, TimeUnit unit) throws InterruptedException {
+		E object = null;
+		long timeoutInMillis = getTimeoutInMillis(timeout, unit);
+		long startTimeInMillis = System.currentTimeMillis();
+		while (object == null && ((startTimeInMillis + timeoutInMillis) > System.currentTimeMillis())) {
+
+			try {
+				boolean acquiredLock = writerLock.tryLock();
+				if (acquiredLock) {
+					object = myLinkedBlockingQueue.poll();
+				}
+			} finally {
+				writerLock.unlock();
+			}
+		}
+		return object;
+	}
 
 	@Override
 	public E element() {

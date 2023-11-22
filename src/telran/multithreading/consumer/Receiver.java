@@ -7,26 +7,26 @@ public class Receiver extends Thread {
 
 	public Receiver(MessageBox messageBox) {
 		this.messageBox = messageBox;
+		
 	}
-
 	@Override
 	public void run() {
 		String message = null;
-		while (true) {
-			try {
-				message = messageBox.take();
-				if(message == "killThread") {
-					break;
-				}
-				System.out.printf("thread id: %d, message: %s\n", getId(), message);
-
-			} catch (InterruptedException e) {
-//				break;
-//				message = messageBox.pull();
-//				if (message == null) {
-//					break;
-//				}
+		try {
+			while(true) {
+				
+				
+					message = messageBox.take();
+				
+				printMessage(message);
+			}
+		} catch (InterruptedException e) {
+			while((message = messageBox.pull()) != null) {
+				printMessage(message);
 			}
 		}
+	}
+	private void printMessage(String message) {
+		System.out.printf("thread id: %d, message: %s\n", getId(),message );
 	}
 }

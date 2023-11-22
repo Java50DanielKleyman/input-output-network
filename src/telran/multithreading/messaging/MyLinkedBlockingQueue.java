@@ -127,11 +127,11 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 		}
 	}
 
-	@Override
-	public E poll(long timeout, TimeUnit unit) throws InterruptedException {
-
-		return myLinkedBlockingQueue.poll(timeout, unit);
-	}
+//	@Override
+//	public E poll(long timeout, TimeUnit unit) throws InterruptedException {
+//
+//		;
+//	}
 
 	@Override
 	public E element() {

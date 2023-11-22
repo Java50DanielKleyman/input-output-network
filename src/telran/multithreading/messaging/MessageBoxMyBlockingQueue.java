@@ -1,7 +1,5 @@
 package telran.multithreading.messaging;
 
-import java.util.concurrent.*;
-
 /**
  * Message box contains only one string
  */

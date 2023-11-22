@@ -31,7 +31,7 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 
 		try {
 			writerLock.lock();
-			return myLinkedBlockingQueue.add(obj);
+			return myLinkedBlockingQueue.offer(obj);
 		} finally {
 			writerLock.unlock();
 		}

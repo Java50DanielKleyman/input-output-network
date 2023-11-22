@@ -11,6 +11,7 @@ public class SenderReceiverAppl {
 
 	public static void main(String[] args) throws InterruptedException {
 		MessageBox messageBox = new MessageBoxMyBlockingQueue();
+		
 		Sender sender = new Sender(messageBox, N_MESSAGES);
 		sender.start();
 		Receiver[] receivers = new Receiver[N_RECEIVERS];
@@ -24,6 +25,7 @@ public class SenderReceiverAppl {
 		for(Receiver receiver: receivers) {
 			receiver.interrupt();
 		}
+		
 		
 	}
 

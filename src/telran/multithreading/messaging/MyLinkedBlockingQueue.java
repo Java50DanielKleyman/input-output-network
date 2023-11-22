@@ -72,7 +72,7 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 			try {
 				boolean acquiredLock = writerLock.tryLock();
 				if (acquiredLock) {
-					added = offer(obj);
+					added = myLinkedBlockingQueue.offer(obj);
 				}
 			} finally {
 				writerLock.unlock();

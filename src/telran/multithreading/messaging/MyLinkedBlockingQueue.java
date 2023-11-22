@@ -1,14 +1,26 @@
 package telran.multithreading.messaging;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.ArrayDeque;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
-    private BlockingQueue<E> myLinkedBlockingQueue;
-	public MyLinkedBlockingQueue (int capacity) {
-		myLinkedBlockingQueue = new LinkedBlockingQueue<E>(capacity);
-	}
+	private ArrayDeque<E> myLinkedBlockingQueue;
+	ReentrantReadWriteLock lock;
+	Lock writerLock;
+	Lock readerLock;
+
+    public MyLinkedBlockingQueue(int capacity) {
+        this.myLinkedBlockingQueue = new ArrayDeque<>(capacity);
+        this.lock = new ReentrantReadWriteLock();
+        writerLock = lock.writeLock();
+        readerLock = lock.readLock();
+        
+    }
+
 	@Override
 	public boolean add(E obj) {
 		

@@ -14,16 +14,16 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 	ReentrantReadWriteLock lock;
 	Lock writerLock;
 	Lock readerLock;
-	private int capacity;
-	private final Condition notFull;
+	private final Condition producer;
+	private final Condition consumer;
 
 	public MyLinkedBlockingQueue(int capacity) {
 		this.myLinkedBlockingQueue = new ArrayDeque<>(capacity);
 		this.lock = new ReentrantReadWriteLock();
 		writerLock = lock.writeLock();
 		readerLock = lock.readLock();
-		this.capacity = capacity;
-		notFull = writerLock.newCondition();
+		producer = writerLock.newCondition();
+		consumer = writerLock.newCondition();
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 
 		try {
 			writerLock.lock();
-			return myLinkedBlockingQueue.offer(obj);
+			return myLinkedBlockingQueue.add(obj);
 		} finally {
 			writerLock.unlock();
 		}
@@ -52,16 +52,14 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 	public void put(E obj) throws InterruptedException {
 		try {
 			writerLock.lock();
-			while (myLinkedBlockingQueue.size() == capacity) {
-				notFull.await();
+			while (!myLinkedBlockingQueue.add(obj)) {
+				producer.await();
 			}
-			myLinkedBlockingQueue.offer(obj);
-			notFull.signal();
+			consumer.signal();
 
 		} finally {
 			writerLock.unlock();
 		}
-
 	}
 
 	@Override
@@ -94,7 +92,6 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 	@Override
 	public E remove() {
 
-		
 		try {
 			writerLock.lock();
 			return myLinkedBlockingQueue.remove();
@@ -117,7 +114,17 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 	@Override
 	public E take() throws InterruptedException {
 
-		return myLinkedBlockingQueue.take();
+		try {
+			writerLock.lock();
+			E object = myLinkedBlockingQueue.poll();
+			while (object == null) {
+				consumer.await();
+			}
+			producer.signal();
+			return object;
+		} finally {
+			writerLock.unlock();
+		}
 	}
 
 	@Override

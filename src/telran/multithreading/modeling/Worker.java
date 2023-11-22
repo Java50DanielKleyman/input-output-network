@@ -16,7 +16,7 @@ public class Worker extends Thread {
 	public void run() {
 		Car car = null;
 		try {
-			while (!Thread.currentThread().isInterrupted()) {
+			while (true) {
 				car = cars.take();
 				processingCar(car);
 			}

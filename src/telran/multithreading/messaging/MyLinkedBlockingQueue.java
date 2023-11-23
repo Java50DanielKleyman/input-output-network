@@ -4,10 +4,7 @@ import java.util.ArrayDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 	private ArrayDeque<E> myLinkedBlockingQueue;
@@ -79,7 +76,7 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 			}
 		}
 		return isAdded;
-		
+
 	}
 
 	@Override
@@ -160,5 +157,4 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 			readerLock.unlock();
 		}
 	}
-
 }

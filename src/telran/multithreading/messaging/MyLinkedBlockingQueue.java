@@ -65,7 +65,7 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 	@Override
 	public boolean offer(E obj, long timeout, TimeUnit unit) throws InterruptedException {
 		boolean isAdded = false;
-		long timeoutInMillis = getTimeoutInMillis(timeout, unit);
+		long timeoutInMillis = unit.toMillis(timeout);
 		long startTimeInMillis = System.currentTimeMillis();
 		while (!isAdded && ((startTimeInMillis + timeoutInMillis) > System.currentTimeMillis())) {
 
@@ -79,14 +79,7 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 			}
 		}
 		return isAdded;
-	}
-
-	private long getTimeoutInMillis(long timeout, TimeUnit unit) {
-		long originalTimeout = timeout;
-		TimeUnit originalTimeUnit = unit;
-		long timeoutInMillis = originalTimeUnit.toMillis(originalTimeout);
-
-		return timeoutInMillis;
+		
 	}
 
 	@Override
@@ -130,7 +123,7 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 	@Override
 	public E poll(long timeout, TimeUnit unit) throws InterruptedException {
 		E object = null;
-		long timeoutInMillis = getTimeoutInMillis(timeout, unit);
+		long timeoutInMillis = unit.toMillis(timeout);
 		long startTimeInMillis = System.currentTimeMillis();
 		while (object == null && ((startTimeInMillis + timeoutInMillis) > System.currentTimeMillis())) {
 

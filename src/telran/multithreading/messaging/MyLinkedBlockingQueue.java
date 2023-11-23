@@ -64,21 +64,21 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 
 	@Override
 	public boolean offer(E obj, long timeout, TimeUnit unit) throws InterruptedException {
-		boolean added = false;
+		boolean isAdded = false;
 		long timeoutInMillis = getTimeoutInMillis(timeout, unit);
 		long startTimeInMillis = System.currentTimeMillis();
-		while (!added && ((startTimeInMillis + timeoutInMillis) > System.currentTimeMillis())) {
+		while (!isAdded && ((startTimeInMillis + timeoutInMillis) > System.currentTimeMillis())) {
 
 			try {
 				boolean acquiredLock = writerLock.tryLock();
 				if (acquiredLock) {
-					added = myLinkedBlockingQueue.offer(obj);
+					isAdded = myLinkedBlockingQueue.offer(obj);
 				}
 			} finally {
 				writerLock.unlock();
 			}
 		}
-		return added;
+		return isAdded;
 	}
 
 	private long getTimeoutInMillis(long timeout, TimeUnit unit) {

@@ -106,8 +106,8 @@ public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
 
 		try {
 			writerLock.lock();
-			E object = myLinkedBlockingQueue.poll();
-			while (object == null) {
+			E object = null;
+			while ((object = myLinkedBlockingQueue.poll()) == null) {
 				consumer.await();
 			}
 			producer.signal();

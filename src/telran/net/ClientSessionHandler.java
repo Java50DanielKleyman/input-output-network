@@ -30,7 +30,8 @@ public class ClientSessionHandler implements Runnable {
 				writer.reset();
 				lastActivityTime = System.currentTimeMillis();
 			} catch (SocketTimeoutException e) {
-				if (System.currentTimeMillis() - lastActivityTime > TcpServer.TOTAL_IDLE_TIME) {
+				if (isIdle(TcpServer.TOTAL_IDLE_TIME)
+						&& tcpServer.getNThreads() > TcpServer.connectedClientsCount.get()) {
 					System.out.println("Closing connection due to total idle time exceeding the limit");
 					TcpServer.connectedClientsCount.decrementAndGet();
 					break;
@@ -41,6 +42,9 @@ public class ClientSessionHandler implements Runnable {
 				System.out.println("Abnormal closing connection");
 			}
 		}
+	}
 
+	private boolean isIdle(int totalIdleTime) {
+		return System.currentTimeMillis() - lastActivityTime > TcpServer.TOTAL_IDLE_TIME;
 	}
 }

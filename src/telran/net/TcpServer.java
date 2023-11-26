@@ -42,7 +42,9 @@ public class TcpServer implements Runnable {
 		}
 
 	}
-
+public int getNThreads() {
+	return nThreads;
+}
 	public void shutdown() {
 		executor.shutdownNow();
 	}

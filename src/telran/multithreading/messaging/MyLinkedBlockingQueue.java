@@ -1,160 +1,182 @@
 package telran.multithreading.messaging;
 
-import java.util.ArrayDeque;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.*;
 
 public class MyLinkedBlockingQueue<E> implements MyBlockingQueue<E> {
-	private ArrayDeque<E> myLinkedBlockingQueue;
-	ReentrantReadWriteLock lock;
-	Lock writerLock;
-	Lock readerLock;
-	private final Condition producer;
-	private final Condition consumer;
-
-	public MyLinkedBlockingQueue(int capacity) {
-		this.myLinkedBlockingQueue = new ArrayDeque<>(capacity);
-		this.lock = new ReentrantReadWriteLock();
-		writerLock = lock.writeLock();
-		readerLock = lock.readLock();
-		producer = writerLock.newCondition();
-		consumer = writerLock.newCondition();
+    int capacity;
+    Queue<E> queue = new LinkedList<>();
+    Lock monitor = new ReentrantLock();
+    Condition producerWaiting = monitor.newCondition();
+    Condition consumerWaiting = monitor.newCondition();
+	public MyLinkedBlockingQueue (int capacity) {
+		this.capacity = capacity;
 	}
-
 	@Override
 	public boolean add(E obj) {
-
 		try {
-			writerLock.lock();
-			return myLinkedBlockingQueue.add(obj);
+			monitor.lock();
+			if (queue.size() == capacity) {
+				throw new IllegalStateException();
+			}
+			boolean res = queue.add(obj);
+			consumerWaiting.signal();
+			return res;
 		} finally {
-			writerLock.unlock();
+			monitor.unlock();
 		}
 	}
 
 	@Override
 	public boolean offer(E obj) {
-
+		boolean res = true;
 		try {
-			writerLock.lock();
-			return myLinkedBlockingQueue.offer(obj);
+			monitor.lock();
+			if (queue.size() == capacity) {
+				res = false;
+			} else {
+				queue.add(obj);
+				consumerWaiting.signal();
+			}
+
+			return res;
 		} finally {
-			writerLock.unlock();
+			monitor.unlock();
 		}
 	}
 
 	@Override
 	public void put(E obj) throws InterruptedException {
 		try {
-			writerLock.lock();
-			while (!myLinkedBlockingQueue.add(obj)) {
-				producer.await();
+			monitor.lock();
+			while (queue.size() == capacity) {
+				producerWaiting.await();
 			}
-			consumer.signal();
+			queue.add(obj);
+			consumerWaiting.signal();
 
 		} finally {
-			writerLock.unlock();
+			monitor.unlock();
 		}
+
 	}
 
 	@Override
 	public boolean offer(E obj, long timeout, TimeUnit unit) throws InterruptedException {
-		boolean isAdded = false;
-		long timeoutInMillis = unit.toMillis(timeout);
-		long startTimeInMillis = System.currentTimeMillis();
-		while (!isAdded && ((startTimeInMillis + timeoutInMillis) > System.currentTimeMillis())) {
-
-			try {
-				boolean acquiredLock = writerLock.tryLock();
-				if (acquiredLock) {
-					isAdded = myLinkedBlockingQueue.offer(obj);
+		boolean res = true;
+		try {
+			monitor.lock();
+			while (queue.size() == capacity && res) {
+				if (!producerWaiting.await(timeout, unit)) {
+					res = false;
 				}
-			} finally {
-				writerLock.unlock();
 			}
-		}
-		return isAdded;
+			if (res) {
+				queue.add(obj);
+				consumerWaiting.signal();
+			}
+			return res;
 
+		} finally {
+			monitor.unlock();
+		}
 	}
 
 	@Override
 	public E remove() {
-
 		try {
-			writerLock.lock();
-			return myLinkedBlockingQueue.remove();
+			monitor.lock();
+			E result = queue.remove();
+			producerWaiting.signal();
+			return result;
 		} finally {
-			writerLock.unlock();
+			monitor.unlock();
 		}
 	}
 
 	@Override
 	public E poll() {
-
+		E result = null;
 		try {
-			writerLock.lock();
-			return myLinkedBlockingQueue.poll();
+			monitor.lock();
+
+			result = queue.poll();
+			if (result != null) {
+				producerWaiting.signal();
+			}
+
+			return result;
 		} finally {
-			writerLock.unlock();
+			monitor.unlock();
 		}
 	}
 
 	@Override
 	public E take() throws InterruptedException {
-
 		try {
-			writerLock.lock();
-			E object = null;
-			while ((object = myLinkedBlockingQueue.poll()) == null) {
-				consumer.await();
+			monitor.lock();
+			while (queue.isEmpty()) {
+				consumerWaiting.await();
 			}
-			producer.signal();
-			return object;
+			E res = queue.remove();
+			producerWaiting.signal();
+			return res;
+
 		} finally {
-			writerLock.unlock();
+			monitor.unlock();
 		}
 	}
 
 	@Override
 	public E poll(long timeout, TimeUnit unit) throws InterruptedException {
-		E object = null;
-		long timeoutInMillis = unit.toMillis(timeout);
-		long startTimeInMillis = System.currentTimeMillis();
-		while (object == null && ((startTimeInMillis + timeoutInMillis) > System.currentTimeMillis())) {
-
-			try {
-				boolean acquiredLock = writerLock.tryLock();
-				if (acquiredLock) {
-					object = myLinkedBlockingQueue.poll();
+		boolean running = true;
+		E res = null;
+		try {
+			monitor.lock();
+			while (queue.isEmpty() && running) {
+				if (!consumerWaiting.await(timeout, unit)) {
+					running = false;
 				}
-			} finally {
-				writerLock.unlock();
 			}
+			if (running) {
+				res = queue.remove();
+				producerWaiting.signal();
+			}
+			return res;
+
+		} finally
+
+		{
+			monitor.unlock();
 		}
-		return object;
 	}
 
 	@Override
 	public E element() {
-
 		try {
-			readerLock.lock();
-			return myLinkedBlockingQueue.element();
+			monitor.lock();
+			return queue.element();
 		} finally {
-			readerLock.unlock();
+			monitor.unlock();
 		}
 	}
 
 	@Override
 	public E peek() {
-
+		E result = null;
 		try {
-			readerLock.lock();
-			return myLinkedBlockingQueue.peek();
+			monitor.lock();
+			if (queue.size() != 0) {
+				result = queue.peek();
+
+			}
+
+			return result;
 		} finally {
-			readerLock.unlock();
+			monitor.unlock();
 		}
 	}
+
 }

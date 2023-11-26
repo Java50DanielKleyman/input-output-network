@@ -14,6 +14,7 @@ public class ClientSessionHandler implements Runnable {
 	 reader = new ObjectInputStream(socket.getInputStream());
 	 writer = new ObjectOutputStream(socket.getOutputStream());
  }
+ 
 	@Override
 	public void run() {
 			while(!tcpServer.executor.isShutdown()) {

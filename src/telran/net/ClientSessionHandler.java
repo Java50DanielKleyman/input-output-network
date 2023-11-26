@@ -29,6 +29,7 @@ public class ClientSessionHandler implements Runnable {
 				writer.writeObject(response);
 				writer.reset();
 				lastActivityTime = System.currentTimeMillis();
+				System.out.println("client number " + TcpServer.connectedClientsCount.get());
 			} catch (SocketTimeoutException e) {
 				if (isIdle(TcpServer.TOTAL_IDLE_TIME)
 						&& tcpServer.getNThreads() > TcpServer.connectedClientsCount.get()) {

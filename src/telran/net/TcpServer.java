@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TcpServer implements Runnable {
-	public static final int IDLE_TIMEOUT = 100;
+	public static final int IDLE_TIMEOUT = 500;
 	public static final int TOTAL_IDLE_TIME = 1000;
 	private int port;
 	private ApplProtocol protocol;
@@ -30,17 +30,16 @@ public class TcpServer implements Runnable {
 			try {
 				Socket socket = serverSocket.accept();
 				socket.setSoTimeout(IDLE_TIMEOUT);
-				ClientSessionHandler client = new ClientSessionHandler(socket, protocol, this);
-				connectedClientsCount.incrementAndGet();
+				ClientSessionHandler client = new ClientSessionHandler(socket, protocol, this);		
 				executor.execute(client);
+				connectedClientsCount.incrementAndGet();
 			} catch (SocketTimeoutException e) {
 				// for exit from accept to another iteration of cycle
 			} catch (Exception e) {
 				throw new RuntimeException(e.toString());
 			}
 
-		}
-
+		}		
 	}
 public int getNThreads() {
 	return nThreads;

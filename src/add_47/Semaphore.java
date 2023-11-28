@@ -13,6 +13,7 @@ import java.util.stream.Stream;
  */
 public class Semaphore {
 	private int resourceCount;
+	private AtomicInteger acquiredResources = new AtomicInteger(0);
 
 	public Semaphore(int resourceCount) {
 		this.resourceCount = resourceCount;
@@ -21,29 +22,30 @@ public class Semaphore {
 	/**
 	 * Acquires resource if available. If no resources available, suspends the
 	 * current thread until other one releases at least one resource.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 */
 	public synchronized void acquire() throws InterruptedException {
-		// TODO: implement method
+		if (acquiredResources.get() == resourceCount) {
+			this.wait();			
+		}	
 	}
 
 	/**
 	 * Releases previously acquired resource. Never suspends current thread.
 	 */
-	public synchronized void release() {
-		// TODO: implement method
+	public synchronized void release() {		
+		this.notifyAll();
 	}
 
 	/**
-	 * Simple test: 10 threads are competing to repeatedly use 5 resources.
-	 * See that actual number of simultaneously used resources never more than 5.
+	 * Simple test: 10 threads are competing to repeatedly use 5 resources. See that
+	 * the actual number of simultaneously used resources never more than 5.
 	 */
 	public static void main(String[] args) throws InterruptedException {
 		final int RESOURCE_COUNT = 5;
 		final int THREADS_COUNT = 10;
 		final int PER_THREAD_ACQUISITIONS_COUNT = 3; // number "acquire" operations performed by each thread
-		AtomicInteger acquiredResources = new AtomicInteger(0);
 
 		Semaphore sem = new Semaphore(RESOURCE_COUNT);
 
@@ -52,12 +54,12 @@ public class Semaphore {
 				for (int i = 0; i < PER_THREAD_ACQUISITIONS_COUNT; i++) {
 					System.out.printf("Thread %s needs resource%n", Thread.currentThread().getName());
 					sem.acquire();
-					int newCount = acquiredResources.incrementAndGet();
+					int newCount = sem.acquiredResources.incrementAndGet();
 					System.out.printf("Thread %s acquired resource, totally acquired: %d %n",
 							Thread.currentThread().getName(), newCount);
 					Thread.sleep((int) (Math.random() * 2000));
-					newCount = acquiredResources.decrementAndGet(); // before release to avoid racing
 					sem.release();
+					newCount = sem.acquiredResources.decrementAndGet(); // after release to avoid racing
 					System.out.printf("Thread %s released resource, totally acquired: %d %n",
 							Thread.currentThread().getName(), newCount);
 				}
@@ -73,5 +75,4 @@ public class Semaphore {
 			t.join();
 		}
 	}
-
 }

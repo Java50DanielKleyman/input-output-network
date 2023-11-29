@@ -1,6 +1,7 @@
 package telran.employees;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import telran.employees.dto.*;
@@ -25,21 +26,26 @@ public class CompanyProtocol implements ApplProtocol {
 		Serializable responseData = 0;
 		Integer defaultValue = Integer.MAX_VALUE;
 		try {
-			responseData = switch (requestType) {
-			case "employee/add" -> employee_add(requestData);
-			case "employee/get" -> employee_get(requestData);
-			case "employees/all" -> employees_all(requestData);
-			case "employee/salary/update" -> employee_salary_update(requestData);
-			case "employee/remove" -> employee_remove(requestData);
-			case "employees/department/salary/distribution" -> employees_department_salary_distribution(requestData);
-			case "employees/salary/distribution" -> employees_salary_distribution(requestData);
-			case "employees/department/get" -> employees_department_get(requestData);
-			case "employees/salary/get" -> employees_salary_get(requestData);
-			case "employees/age/get" -> employees_age_get(requestData);
-			case "employee/department/update" -> employees_department_update(requestData);
-			
-			default -> defaultValue;
-			};
+			Method[] methods = CompanyProtocol.class.getDeclaredMethods();
+			String requestTypeModified = requestType.replace("/", "_");
+			Method method = getMethod(methods, requestTypeModified);
+			method.setAccessible(true);
+			responseData = method == null? defaultValue : (Serializable) method.invoke(new CompanyProtocol(company), requestData);
+//			responseData = switch (requestType) {
+//			case "employee/add" -> employee_add(requestData);
+//			case "employee/get" -> employee_get(requestData);
+//			case "employees/all" -> employees_all(requestData);
+//			case "employee/salary/update" -> employee_salary_update(requestData);
+//			case "employee/remove" -> employee_remove(requestData);
+//			case "employees/department/salary/distribution" -> employees_department_salary_distribution(requestData);
+//			case "employees/salary/distribution" -> employees_salary_distribution(requestData);
+//			case "employees/department/get" -> employees_department_get(requestData);
+//			case "employees/salary/get" -> employees_salary_get(requestData);
+//			case "employees/age/get" -> employees_age_get(requestData);
+//			case "employee/department/update" -> employees_department_update(requestData);
+//
+//			default -> defaultValue;
+//			};
 			response = responseData == defaultValue ? new Response(ResponseCode.WRONG_TYPE, requestType)
 					: new Response(ResponseCode.OK, responseData);
 		} catch (Exception e) {
@@ -49,18 +55,29 @@ public class CompanyProtocol implements ApplProtocol {
 		return response;
 	}
 
+	private Method getMethod(Method[] methods, String requestTypeModified) {
+		Method method = null;
+		for (Method mtd : methods) {
+			if (requestTypeModified.equals(mtd.getName())) {
+				method = mtd;
+				break;
+			}
+		}
+		return method;
+	}
+
 	private Serializable employees_department_update(Serializable requestData) {
 		UpdateDepartmentData data = (UpdateDepartmentData) requestData;
 		return company.updateDepartment(data.id(), data.newDepartment());
 	}
 
 	private Serializable employees_age_get(Serializable requestData) {
-		int[] ages = (int[])requestData;
+		int[] ages = (int[]) requestData;
 		return new ArrayList<>(company.getEmployeesByAge(ages[0], ages[1]));
 	}
 
 	private Serializable employees_salary_get(Serializable requestData) {
-		int[] salaries= (int[])requestData;
+		int[] salaries = (int[]) requestData;
 		return new ArrayList<>(company.getEmployeesBySalary(salaries[0], salaries[1]));
 	}
 
@@ -75,7 +92,7 @@ public class CompanyProtocol implements ApplProtocol {
 	}
 
 	private Serializable employees_department_salary_distribution(Serializable requestData) {
-		
+
 		return new ArrayList<>(company.getDepartmentSalaryDistribution());
 	}
 
@@ -92,7 +109,7 @@ public class CompanyProtocol implements ApplProtocol {
 	}
 
 	private Serializable employees_all(Serializable requestData) {
-		
+
 		return new ArrayList<>(company.getEmployees());
 	}
 

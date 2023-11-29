@@ -30,7 +30,8 @@ public class CompanyProtocol implements ApplProtocol {
 			String requestTypeModified = requestType.replace("/", "_");
 			Method method = getMethod(methods, requestTypeModified);
 			method.setAccessible(true);
-			responseData = method == null? defaultValue : (Serializable) method.invoke(new CompanyProtocol(company), requestData);
+			responseData = method == null ? defaultValue
+					: (Serializable) method.invoke(new CompanyProtocol(company), requestData);
 //			responseData = switch (requestType) {
 //			case "employee/add" -> employee_add(requestData);
 //			case "employee/get" -> employee_get(requestData);

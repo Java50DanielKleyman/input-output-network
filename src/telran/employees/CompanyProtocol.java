@@ -32,21 +32,6 @@ public class CompanyProtocol implements ApplProtocol {
 			method.setAccessible(true);
 			responseData = method == null ? defaultValue
 					: (Serializable) method.invoke(new CompanyProtocol(company), requestData);
-//			responseData = switch (requestType) {
-//			case "employee/add" -> employee_add(requestData);
-//			case "employee/get" -> employee_get(requestData);
-//			case "employees/all" -> employees_all(requestData);
-//			case "employee/salary/update" -> employee_salary_update(requestData);
-//			case "employee/remove" -> employee_remove(requestData);
-//			case "employees/department/salary/distribution" -> employees_department_salary_distribution(requestData);
-//			case "employees/salary/distribution" -> employees_salary_distribution(requestData);
-//			case "employees/department/get" -> employees_department_get(requestData);
-//			case "employees/salary/get" -> employees_salary_get(requestData);
-//			case "employees/age/get" -> employees_age_get(requestData);
-//			case "employee/department/update" -> employees_department_update(requestData);
-//
-//			default -> defaultValue;
-//			};
 			response = responseData == defaultValue ? new Response(ResponseCode.WRONG_TYPE, requestType)
 					: new Response(ResponseCode.OK, responseData);
 		} catch (Exception e) {
